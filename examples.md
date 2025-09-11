@@ -3,6 +3,11 @@
 
 Below are examples of how to call each reusable workflow from another repository. Replace `main` with a specific tag or branch if needed.
 
+**Note**: Some workflows require secrets to be passed. Make sure your repository has the necessary secrets configured:
+
+- **NPM_TOKEN**: Required for workflows that publish to npm
+- **AURO_SURGE_TOKEN**: Required for workflows that deploy to Surge
+
 ---
 
 ## 1. `add-project.yml`
@@ -55,6 +60,9 @@ on:
 jobs:
   pr-workflow:
     uses: AlaskaAirlines/auro-actions/.github/workflows/pull-request.yml@main
+    secrets:
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      AURO_SURGE_TOKEN: ${{ secrets.AURO_SURGE_TOKEN }}
 ```
 
 ---
@@ -144,4 +152,6 @@ on:
 jobs:
   release:
     uses: AlaskaAirlines/auro-actions/.github/workflows/release.yml@main
+    secrets:
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 ```

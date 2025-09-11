@@ -23,8 +23,18 @@ on:
 
 jobs:
   pr-workflow:
-    uses: AlaskaAirlines/auro-actions/workflows/pull-request.yml@main
+    uses: AlaskaAirlines/auro-actions/.github/workflows/pull-request.yml@main
+    secrets:
+      NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+      AURO_SURGE_TOKEN: ${{ secrets.AURO_SURGE_TOKEN }}
 ```
+
+## Required Secrets
+
+Some workflows require specific secrets to be configured in your repository:
+
+- **NPM_TOKEN**: Required for `pull-request.yml` and `release.yml` workflows for npm operations
+- **AURO_SURGE_TOKEN**: Required for `pull-request.yml` workflow for Surge deployment
 
 ## Available Workflows
 
