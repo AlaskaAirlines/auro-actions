@@ -18,7 +18,7 @@ on:
 
 jobs:
   add-project:
-    uses: AlaskaAirlines/auro-actions/workflows/add-project.yml@main
+    uses: AlaskaAirlines/auro-actions/.github/workflows/add-project.yml@main
 ```
 
 ---
@@ -35,7 +35,7 @@ on:
 jobs:
   check-commits:
     name: Check Commits
-    uses: AlaskaAirlines/auro-actions/workflows/check-commits.yml@main
+    uses: AlaskaAirlines/auro-actions/.github/workflows/check-commits.yml@main
 ```
 
 ---
@@ -54,7 +54,7 @@ on:
 
 jobs:
   pr-workflow:
-    uses: AlaskaAirlines/auro-actions/workflows/pull-request.yml@main
+    uses: AlaskaAirlines/auro-actions/.github/workflows/pull-request.yml@main
 ```
 
 ---
@@ -71,7 +71,7 @@ on:
 
 jobs:
   sync-tags:
-    uses: AlaskaAirlines/auro-actions/workflows/sync-tags.yml@main
+    uses: AlaskaAirlines/auro-actions/.github/workflows/sync-tags.yml@main
 ```
 
 ---
@@ -89,7 +89,7 @@ on:
 
 jobs:
   codeql:
-    uses: AlaskaAirlines/auro-actions/workflows/codeql.yml@main
+    uses: AlaskaAirlines/auro-actions/.github/workflows/codeql.yml@main
 ```
 
 ---
@@ -107,7 +107,7 @@ on:
 
 jobs:
   dev-demo:
-    uses: AlaskaAirlines/auro-actions/workflows/dev-demo.yml@main
+    uses: AlaskaAirlines/auro-actions/.github/workflows/dev-demo.yml@main
 ```
 
 ---
@@ -125,7 +125,7 @@ on:
 
 jobs:
   review-policy:
-    uses: AlaskaAirlines/auro-actions/workflows/check-pr.yml@main
+    uses: AlaskaAirlines/auro-actions/.github/workflows/check-pr.yml@main
 ```
 
 ---
@@ -143,5 +143,5 @@ on:
 
 jobs:
   release:
-    uses: AlaskaAirlines/auro-actions/workflows/release.yml@main
+    uses: AlaskaAirlines/auro-actions/.github/workflows/release.yml@main
 ```
