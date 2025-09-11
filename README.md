@@ -24,6 +24,8 @@ on:
 jobs:
   action:
     uses: AlaskaAirlines/auro-actions/.github/workflows/pull-request.yml@main
+    input:
+      component: kabab-case-name
     secrets:
       NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       AURO_SURGE_TOKEN: ${{ secrets.AURO_SURGE_TOKEN }}
