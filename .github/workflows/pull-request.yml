@@ -117,7 +117,7 @@ jobs:
             ./node_modules
           key: build-22-${{ github.run_id }}
       - name: Deploy slideshow demo
-        uses: "./actions/surge"
+        uses: "./.github/actions/surge"
         with:
           action: deploy
           component: slideshow
@@ -132,7 +132,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Teardown slideshow from Surge
-        uses: "./actions/surge"
+        uses: "./.github/actions/surge"
         with:
           action: teardown
           component: slideshow
