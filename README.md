@@ -12,11 +12,18 @@ Centralized repository for reusable GitHub Actions workflows and composite actio
 Auro repositories consume workflows from this repository using GitHub's reusable workflow syntax:
 
 ```yaml
-uses: AlaskaAirlines/auro-actions/.github/workflows/[workflow-name].yml@v1
-with:
-  # Repository-specific inputs
-  node-version: '22'
-  npm-token: ${{ secrets.NPM_TOKEN }}
+name: PR Workflow
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, closed]
+    branches-ignore:
+      - 'rc/**'
+      - 'main'
+
+jobs:
+  pr-workflow:
+    uses: AlaskaAirlines/auro-actions/workflows/pull-request.yml@main
 ```
 
 ## Available Workflows
