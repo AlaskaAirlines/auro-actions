@@ -15,7 +15,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: ./actions/check-commits
+      - uses: ./.github/actions/check-commits
         with:
           os: ubuntu-latest
           node-version: 22

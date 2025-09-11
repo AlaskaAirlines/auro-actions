@@ -19,7 +19,7 @@ jobs:
         node-version: [20, 22]
     steps:
       - uses: actions/checkout@v4
-      - uses: ./actions/build
+      - uses: ./.github/actions/build
         with:
           os: ubuntu-latest
           node-version: ${{ matrix.node-version }}
@@ -32,7 +32,7 @@ jobs:
         node-version: [20, 22]
     steps:
       - uses: actions/checkout@v4
-      - uses: ./actions/test
+      - uses: ./.github/actions/test
         with:
           os: ubuntu-latest
           node-version: ${{ matrix.node-version }}
