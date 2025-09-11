@@ -20,7 +20,6 @@ permissions:
 jobs:
   build:
     if: github.event.action != 'closed'
-    name: Build
     runs-on: ubuntu-latest
     strategy:
       matrix:
