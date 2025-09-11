@@ -1,5 +1,3 @@
-name: Sync Tags
-
 on:
   workflow_call:
 

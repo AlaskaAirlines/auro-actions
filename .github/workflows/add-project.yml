@@ -1,5 +1,3 @@
-name: Add Project to Issue
-
 on:
   workflow_call:
 

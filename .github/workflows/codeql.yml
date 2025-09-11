@@ -1,5 +1,3 @@
-name: Code QL
-
 on:
   workflow_call:
 

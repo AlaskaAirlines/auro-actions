@@ -1,5 +1,3 @@
-name: Check Commits
-
 on:
   workflow_call:
 

@@ -22,7 +22,7 @@ on:
 
 
 jobs:
-  add-project:
+  auro:
     uses: AlaskaAirlines/auro-actions/.github/workflows/add-project.yml@main
 ```
 
@@ -38,7 +38,7 @@ on:
     types: [opened, reopened, unlabeled, synchronize]
 
 jobs:
-  check-commits:
+  auro:
     name: Check Commits
     uses: AlaskaAirlines/auro-actions/.github/workflows/check-commits.yml@main
 ```
@@ -58,7 +58,7 @@ on:
       - 'main'
 
 jobs:
-  pr-workflow:
+  auro:
     uses: AlaskaAirlines/auro-actions/.github/workflows/pull-request.yml@main
     secrets:
       NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
@@ -78,7 +78,7 @@ on:
     types: [published]
 
 jobs:
-  sync-tags:
+  auro:
     uses: AlaskaAirlines/auro-actions/.github/workflows/sync-tags.yml@main
 ```
 
@@ -96,7 +96,7 @@ on:
     branches: ["main"]
 
 jobs:
-  codeql:
+  auro:
     uses: AlaskaAirlines/auro-actions/.github/workflows/codeql.yml@main
 ```
 
@@ -114,7 +114,7 @@ on:
   pull_request:
 
 jobs:
-  dev-demo:
+  auro:
     uses: AlaskaAirlines/auro-actions/.github/workflows/dev-demo.yml@main
 ```
 
@@ -132,7 +132,7 @@ on:
     types: [labeled, unlabeled, opened, synchronize, reopened]
 
 jobs:
-  review-policy:
+  auro:
     uses: AlaskaAirlines/auro-actions/.github/workflows/check-pr.yml@main
 ```
 
@@ -150,7 +150,7 @@ on:
       - 'main'
 
 jobs:
-  release:
+  auro:
     uses: AlaskaAirlines/auro-actions/.github/workflows/release.yml@main
     secrets:
       NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
