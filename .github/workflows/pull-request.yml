@@ -28,7 +28,6 @@ jobs:
           node-version: ${{ matrix.node-version }}
   test:
     if: github.event.action != 'closed'
-    name: Test
     needs: build
     runs-on: ubuntu-latest
     strategy:
@@ -41,7 +40,6 @@ jobs:
           os: ubuntu-latest
           node-version: ${{ matrix.node-version }}
   release:
-    name: PR Release
     needs: [build, test]
     runs-on: ubuntu-latest
     # Skip on PR close and on release branches
@@ -99,7 +97,6 @@ jobs:
 
               [View on npmjs.com](https://www.npmjs.com/package/${{ steps.package.outputs.name }}/v/${{ steps.package.outputs.version }})
   deploy:
-    name: Deploy
     needs: [build, test]
     runs-on: ubuntu-latest
     # Skip on PR close
@@ -128,8 +125,7 @@ jobs:
           demo-path: "./demo"
           surge-token: ${{ secrets.AURO_SURGE_TOKEN }}
           github-token: ${{ github.token }}
-  prune:
-    name: Teardown
+  teardown:
     runs-on: ubuntu-latest
     # Only run on PR close
     if: github.event.action == 'closed'
