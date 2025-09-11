@@ -22,7 +22,7 @@ on:
       - 'main'
 
 jobs:
-  auro:
+  action:
     uses: AlaskaAirlines/auro-actions/.github/workflows/pull-request.yml@main
     secrets:
       NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

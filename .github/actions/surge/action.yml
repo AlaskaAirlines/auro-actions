@@ -1,4 +1,4 @@
-name: "Component PR Preview"
+name: "surge"
 description: "Deploy or teardown a single component to/from Surge with GitHub deployment status integration"
 
 inputs:

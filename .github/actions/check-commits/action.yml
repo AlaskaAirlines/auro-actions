@@ -1,4 +1,4 @@
-name: 'Check Commits'
+name: 'check'
 description: 'Validates commit messages'
 inputs:
   os:
