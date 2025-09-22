@@ -26,7 +26,7 @@ jobs:
         node-version: [20, 22]
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/actions/build
+      - uses: AlaskaAirlines/auro-actions/.github/actions/build@main
         with:
           os: ubuntu-latest
           node-version: ${{ matrix.node-version }}
@@ -39,7 +39,7 @@ jobs:
         node-version: [20, 22]
     steps:
       - uses: actions/checkout@v4
-      - uses: ./.github/actions/test
+      - uses: AlaskaAirlines/auro-actions/.github/actions/test@main
         with:
           os: ubuntu-latest
           node-version: ${{ matrix.node-version }}
@@ -121,7 +121,7 @@ jobs:
             ./node_modules
           key: build-22-${{ github.run_id }}
       - name: Deploy ${{ inputs.component }} demo
-        uses: "./.github/actions/surge"
+        uses: AlaskaAirlines/auro-actions/.github/actions/surge@main
         with:
           action: deploy
           component: ${{ inputs.component }}
@@ -136,7 +136,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Teardown ${{ inputs.component }} from Surge
-        uses: "./.github/actions/surge"
+        uses: AlaskaAirlines/auro-actions/.github/actions/surge@main
         with:
           action: teardown
           component: ${{ inputs.component }}
