@@ -73,7 +73,9 @@ jobs:
             script: |
               const fs = require('fs');
               const packageJson = JSON.parse(fs.readFileSync('./package.json', 'utf8'));
+              const prodName = packageJson.name.replace('-dev', '');
               core.setOutput('name', packageJson.name);
+              core.setOutput('prodName', prodName);
               core.setOutput('version', packageJson.version);
               return packageJson;
             result-encoding: string
@@ -96,7 +98,7 @@ jobs:
 
               Install via alias:
               ```bash
-              npm install @aurodesignsystem@npm:${{ steps.package.outputs.name }}@${{ steps.package.outputs.version }}
+              npm install ${{ steps.package.outputs.prodName }}@npm:${{ steps.package.outputs.name }}@${{ steps.package.outputs.version }}
               ```
 
               [View on npmjs.com](https://www.npmjs.com/package/${{ steps.package.outputs.name }}/v/${{ steps.package.outputs.version }})
