@@ -1,0 +1,62 @@
+on:
+  workflow_call:
+    secrets:
+      NPM_TOKEN:
+        required: true
+
+permissions:
+  contents: read
+  deployments: write
+  issues: write
+  pull-requests: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    # Skip on PR close and on release branches
+    if: github.event.action != 'closed' && !startsWith(github.ref, 'refs/heads/rc/')
+    steps:
+        - uses: actions/checkout@v4
+        - name: Setup Node.js
+          uses: actions/setup-node@v4
+          with:
+            node-version: 22
+            registry-url: 'https://registry.npmjs.org'
+        - name: Generate PR release version
+          run: npx --package=@aurodesignsystem/auro-cli -- auro pr-release -p ${{ github.event.pull_request.number }}
+        - name: Read package.json
+          id: package
+          uses: actions/github-script@v7
+          with:
+            script: |
+              const fs = require('fs');
+              const packageJson = JSON.parse(fs.readFileSync('./package.json', 'utf8'));
+              const prodName = packageJson.name.replace('-dev', '');
+              core.setOutput('name', packageJson.name);
+              core.setOutput('prodName', prodName);
+              core.setOutput('version', packageJson.version);
+              return packageJson;
+            result-encoding: string
+        - name: Publish to NPM
+          run: npm publish --registry=https://registry.npmjs.org
+          env:
+            NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+            NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        - name: Comment on PR
+          uses: marocchino/sticky-pull-request-comment@v2
+          with:
+            header: release
+            message: |
+              🚀 PR Release Published! `v${{ steps.package.outputs.version }}`
+
+              To install:
+              ```bash
+              npm install ${{ steps.package.outputs.name }}@${{ steps.package.outputs.version }}
+              ```
+
+              Install via alias:
+              ```bash
+              npm install ${{ steps.package.outputs.prodName }}@npm:${{ steps.package.outputs.name }}@${{ steps.package.outputs.version }}
+              ```
+
+              [View on npmjs.com](https://www.npmjs.com/package/${{ steps.package.outputs.name }}/v/${{ steps.package.outputs.version }})
