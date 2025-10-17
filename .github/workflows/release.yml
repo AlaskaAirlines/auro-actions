@@ -62,6 +62,7 @@ jobs:
             ./dist
             ./demo
             ./node_modules
+            ./custom-elements.json
           key: build-22-${{ github.run_id }}
       - name: Release
         env:

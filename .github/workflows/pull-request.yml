@@ -63,6 +63,7 @@ jobs:
               ./dist
               ./demo
               ./node_modules
+              ./custom-elements.json
             key: build-22-${{ github.run_id }}
         - name: Generate PR release version
           run: npx --package=@aurodesignsystem/auro-cli -- auro pr-release -p ${{ github.event.pull_request.number }}
@@ -121,6 +122,7 @@ jobs:
             ./dist
             ./demo
             ./node_modules
+            ./custom-elements.json
           key: build-22-${{ github.run_id }}
       - name: Deploy ${{ inputs.component }} demo
         uses: AlaskaAirlines/auro-actions/.github/actions/surge@main

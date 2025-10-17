@@ -24,6 +24,7 @@ runs:
           ./dist
           ./demo
           ./node_modules
+          ./custom-elements.json
         key: build-${{ inputs.node-version }}-${{ github.run_id }}
     - name: Test
       run: npm run test
