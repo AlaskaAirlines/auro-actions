@@ -13,12 +13,14 @@ runs:
     - uses: actions/checkout@v4
       if: ${{ github.action_repository != github.repository }}
     - name: Setup Node.js
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v5
       with:
         node-version: ${{ inputs.node-version }}
+        always-auth: false
+        registry-url: 'https://registry.npmjs.org'
     # Ensure npm 11.5.1 or later is installed
     - name: Upgrade NPM
-      run: npm install -g npm@11.5.1
+      run: npm install -g npm@latest
       shell: bash
     - name: NPM install
       run: npm ci
