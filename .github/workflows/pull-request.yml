@@ -55,8 +55,9 @@ jobs:
     steps:
         - uses: actions/checkout@v4
         - name: Setup Node.js
-          uses: actions/setup-node@v4
+          uses: actions/setup-node@v5
           with:
+            always-auth: false
             node-version: 22
             registry-url: 'https://registry.npmjs.org'
         - name: Upgrade NPM
@@ -96,7 +97,7 @@ jobs:
               echo "NODE_AUTH_TOKEN is set: false"
             fi
         - name: Publish to NPM
-          run: npm publish --registry=https://registry.npmjs.org --tag pr --provenance
+          run: npm publish --tag pr --provenance
         - name: Comment on PR
           uses: marocchino/sticky-pull-request-comment@v2
           with:
