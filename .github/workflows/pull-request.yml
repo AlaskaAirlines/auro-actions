@@ -93,13 +93,11 @@ jobs:
           run: |
             if [ -n "$NODE_AUTH_TOKEN" ]; then
               echo "NODE_AUTH_TOKEN is set: true"
+              npm publish --tag pr --provenance
             else
               echo "NODE_AUTH_TOKEN is set: false"
+              exit 1
             fi
-        - name: Publish to NPM
-          run: npm publish --tag pr --provenance
-          env:
-            NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
         - name: Comment on PR
           uses: marocchino/sticky-pull-request-comment@v2
           with:
