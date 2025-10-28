@@ -1,8 +1,6 @@
 on:
   workflow_call:
     secrets:
-      NPM_TOKEN:
-        required: true
       AURO_SURGE_TOKEN:
         required: true
     inputs:
