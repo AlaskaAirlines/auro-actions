@@ -33,6 +33,8 @@ jobs:
           node-version: 22
       - name: NPM install
         run: npm ci
+      - name: Upgrade NPM
+        run: npm install -g npm@11.5.1
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

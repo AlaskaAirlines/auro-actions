@@ -28,6 +28,8 @@ jobs:
             registry-url: 'https://registry.npmjs.org'
         - name: NPM install
           run: npm ci
+        - name: Upgrade NPM
+          run: npm install -g npm@11.5.1
         - name: Generate PR release version
           run: npx --package=@aurodesignsystem/auro-cli -- auro pr-release -p ${{ github.event.pull_request.number }}
         - name: Read package.json

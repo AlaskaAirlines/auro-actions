@@ -55,6 +55,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
+      - name: Upgrade NPM
+        run: npm install -g npm@11.5.1
       - name: Restore dist/demo directories to cache
         uses: actions/cache@v4
         id: build_cache
@@ -65,7 +67,7 @@ jobs:
             ./node_modules
             ./custom-elements.json
           key: build-22-${{ github.run_id }}
-      - name: Check npm version
+      - name: Check NPM version
         run: npm -v
       - name: Release
         env:

@@ -59,6 +59,8 @@ jobs:
           with:
             node-version: 22
             registry-url: 'https://registry.npmjs.org'
+        - name: Upgrade NPM
+          run: npm install -g npm@11.5.1
         - name: Restore dist/demo directories to cache
           uses: actions/cache@v4
           id: build-ubuntu-latest-node-v22
@@ -84,7 +86,7 @@ jobs:
               core.setOutput('version', packageJson.version);
               return packageJson;
             result-encoding: string
-        - name: Check npm version
+        - name: Check NPM version
           run: npm -v
         - name: Publish to NPM
           run: npm publish --registry=https://registry.npmjs.org

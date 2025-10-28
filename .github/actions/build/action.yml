@@ -17,8 +17,8 @@ runs:
       with:
         node-version: ${{ inputs.node-version }}
     # Ensure npm 11.5.1 or later is installed
-    - name: Update npm
-      run: npm install -g npm@latest
+    - name: Upgrade NPM
+      run: npm install -g npm@11.5.1
       shell: bash
     - name: NPM install
       run: npm ci
