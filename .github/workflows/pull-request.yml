@@ -90,9 +90,6 @@ jobs:
           run: npm -v
         - name: Publish to NPM
           run: npm publish --registry=https://registry.npmjs.org --tag pr
-          env:
-            NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
-            NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
         - name: Comment on PR
           uses: marocchino/sticky-pull-request-comment@v2
           with:
