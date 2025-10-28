@@ -95,8 +95,6 @@ jobs:
             else
               echo "NODE_AUTH_TOKEN is set: false"
             fi
-          env:
-            NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
         - name: Publish to NPM
           run: npm publish --registry=https://registry.npmjs.org --tag pr --provenance
         - name: Comment on PR
