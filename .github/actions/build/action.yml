@@ -16,7 +16,6 @@ runs:
       uses: actions/setup-node@v5
       with:
         node-version: ${{ inputs.node-version }}
-        always-auth: false
         registry-url: 'https://registry.npmjs.org'
     # Ensure npm 11.5.1 or later is installed
     - name: Upgrade NPM
