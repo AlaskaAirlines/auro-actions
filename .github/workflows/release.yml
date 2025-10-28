@@ -5,6 +5,7 @@ on:
         required: true
 
 permissions:
+  id-token: write  # required for OIDC
   actions: read
   contents: read
   deployments: write
@@ -44,7 +45,7 @@ jobs:
       contents: write # to be able to publish a GitHub release
       issues: write # to be able to comment on released issues
       pull-requests: write # to be able to comment on released pull requests
-      id-token: write # to enable use of OIDC for npm provenance      
+      id-token: write  # required for OIDC
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -64,6 +65,8 @@ jobs:
             ./node_modules
             ./custom-elements.json
           key: build-22-${{ github.run_id }}
+      - name: Check npm version
+        run: npm -v
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

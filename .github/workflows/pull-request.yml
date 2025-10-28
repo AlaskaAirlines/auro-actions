@@ -12,6 +12,7 @@ on:
         type: string
 
 permissions:
+  id-token: write  # required for OIDC
   contents: read
   deployments: write
   issues: write
@@ -46,6 +47,9 @@ jobs:
   release:
     needs: [build, test]
     runs-on: ubuntu-latest
+    permissions:
+      id-token: write  # required for OIDC
+      contents: write
     # Skip on PR close and on release branches
     if: github.event.action != 'closed' && !startsWith(github.ref, 'refs/heads/rc/')
     steps:
@@ -80,6 +84,8 @@ jobs:
               core.setOutput('version', packageJson.version);
               return packageJson;
             result-encoding: string
+        - name: Check npm version
+          run: npm -v
         - name: Publish to NPM
           run: npm publish --registry=https://registry.npmjs.org
           env:

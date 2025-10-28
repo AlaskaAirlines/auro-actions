@@ -5,6 +5,7 @@ on:
         required: true
 
 permissions:
+  id-token: write  # required for OIDC
   actions: read
   contents: read
   deployments: write
