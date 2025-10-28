@@ -89,7 +89,7 @@ jobs:
         - name: Check NPM version
           run: npm -v
         - name: Publish to NPM
-          run: npm publish --registry=https://registry.npmjs.org
+          run: npm publish --registry=https://registry.npmjs.org --tag pr
           env:
             NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
             NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
