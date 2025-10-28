@@ -88,6 +88,15 @@ jobs:
             result-encoding: string
         - name: Check NPM version
           run: npm -v
+        - name: Check NODE_AUTH_TOKEN presence
+          run: |
+            if [ -n "$NODE_AUTH_TOKEN" ]; then
+              echo "NODE_AUTH_TOKEN is set: true"
+            else
+              echo "NODE_AUTH_TOKEN is set: false"
+            fi
+          env:
+            NODE_AUTH_TOKEN: ${{ secrets.NODE_AUTH_TOKEN }}
         - name: Publish to NPM
           run: npm publish --registry=https://registry.npmjs.org --tag pr --provenance
         - name: Comment on PR
