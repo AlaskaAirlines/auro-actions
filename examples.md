@@ -23,7 +23,7 @@ on:
 
 jobs:
   action:
-    uses: AlaskaAirlines/auro-actions/.github/workflows/add-project.yml@main
+    uses: AlaskaAirlines/auro-actions/.github/workflows/add-project.yml@dev
 ```
 
 ---
@@ -40,7 +40,7 @@ on:
 jobs:
   action:
     name: Check Commits
-    uses: AlaskaAirlines/auro-actions/.github/workflows/check-commits.yml@main
+    uses: AlaskaAirlines/auro-actions/.github/workflows/check-commits.yml@dev
 ```
 
 ---
@@ -59,7 +59,7 @@ on:
 
 jobs:
   action:
-    uses: AlaskaAirlines/auro-actions/.github/workflows/pull-request.yml@main
+    uses: AlaskaAirlines/auro-actions/.github/workflows/pull-request.yml@dev
     with:
       component: kabab-case-name
     secrets:
@@ -81,7 +81,7 @@ on:
 
 jobs:
   action:
-    uses: AlaskaAirlines/auro-actions/.github/workflows/sync-tags.yml@main
+    uses: AlaskaAirlines/auro-actions/.github/workflows/sync-tags.yml@dev
 ```
 
 ---
@@ -99,7 +99,7 @@ on:
 
 jobs:
   action:
-    uses: AlaskaAirlines/auro-actions/.github/workflows/codeql.yml@main
+    uses: AlaskaAirlines/auro-actions/.github/workflows/codeql.yml@dev
 ```
 
 ---
@@ -117,7 +117,7 @@ on:
 
 jobs:
   action:
-    uses: AlaskaAirlines/auro-actions/.github/workflows/dev-demo.yml@main
+    uses: AlaskaAirlines/auro-actions/.github/workflows/dev-demo.yml@dev
 ```
 
 ---
@@ -135,7 +135,7 @@ on:
 
 jobs:
   action:
-    uses: AlaskaAirlines/auro-actions/.github/workflows/check-pr.yml@main
+    uses: AlaskaAirlines/auro-actions/.github/workflows/check-pr.yml@dev
 ```
 
 ---
@@ -153,7 +153,7 @@ on:
 
 jobs:
   action:
-    uses: AlaskaAirlines/auro-actions/.github/workflows/release.yml@main
+    uses: AlaskaAirlines/auro-actions/.github/workflows/release.yml@dev
     secrets:
       NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
 ```

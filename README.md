@@ -23,7 +23,7 @@ on:
 
 jobs:
   action:
-    uses: AlaskaAirlines/auro-actions/.github/workflows/pull-request.yml@main
+    uses: AlaskaAirlines/auro-actions/.github/workflows/pull-request.yml@dev
     with:
       component: kabab-case-name
     secrets:

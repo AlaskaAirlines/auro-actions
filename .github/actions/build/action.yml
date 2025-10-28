@@ -16,6 +16,10 @@ runs:
       uses: actions/setup-node@v4
       with:
         node-version: ${{ inputs.node-version }}
+    # Ensure npm 11.5.1 or later is installed
+    - name: Update npm
+      run: npm install -g npm@latest
+      shell: bash
     - name: NPM install
       run: npm ci
       shell: bash
