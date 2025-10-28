@@ -89,7 +89,7 @@ jobs:
         - name: Check NPM version
           run: npm -v
         - name: Publish to NPM
-          run: npm publish --registry=https://registry.npmjs.org --tag pr
+          run: npm publish --registry=https://registry.npmjs.org --tag pr --provenance
         - name: Comment on PR
           uses: marocchino/sticky-pull-request-comment@v2
           with:
