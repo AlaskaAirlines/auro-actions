@@ -56,7 +56,7 @@ jobs:
         with:
           node-version: 22
       - name: Upgrade NPM
-        run: npm install -g npm@11.5.1
+        run: npm install -g npm@latest
       - name: Restore dist/demo directories to cache
         uses: actions/cache@v4
         id: build_cache
@@ -69,6 +69,8 @@ jobs:
           key: build-22-${{ github.run_id }}
       - name: Check NPM version
         run: npm -v
+      - name: Force provenance flag for semantic-release
+        run: npm config set provenance true
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

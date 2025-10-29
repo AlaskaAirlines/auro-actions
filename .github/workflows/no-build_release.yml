@@ -28,7 +28,9 @@ jobs:
       - name: NPM install
         run: npm ci
       - name: Upgrade NPM
-        run: npm install -g npm@11.5.1
+        run: npm install -g npm@latest
+      - name: Force provenance flag for semantic-release
+        run: npm config set provenance true
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
