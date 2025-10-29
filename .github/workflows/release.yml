@@ -54,9 +54,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22
-      - name: Upgrade NPM
-        run: npm install -g npm@latest
+          node-version: "lts/*"
       - name: Restore dist/demo directories to cache
         uses: actions/cache@v4
         id: build_cache
@@ -67,11 +65,11 @@ jobs:
             ./node_modules
             ./custom-elements.json
           key: build-22-${{ github.run_id }}
-      - name: Check NPM version
-        run: npm -v
       - name: Force provenance flag for semantic-release
         run: npm config set provenance true
+      - name: NPM install
+        run: npm ci
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npx -p node@v24-lts -c "npx semantic-release@25.0.1"
+        run: npx semantic-release@25.0.1

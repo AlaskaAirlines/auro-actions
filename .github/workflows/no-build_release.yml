@@ -24,14 +24,12 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22
-      - name: NPM install
-        run: npm ci
-      - name: Upgrade NPM
-        run: npm install -g npm@latest
+          node-version: "lts/*"
       - name: Force provenance flag for semantic-release
         run: npm config set provenance true
+      - name: NPM install
+        run: npm ci
       - name: Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npx -p node@v24-lts -c "npx semantic-release@25.0.1"
+        run: npx semantic-release@25.0.1
