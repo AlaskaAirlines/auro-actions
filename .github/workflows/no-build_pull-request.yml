@@ -14,9 +14,6 @@ permissions:
 jobs:
   release:
     runs-on: ubuntu-latest
-    permissions:
-      id-token: write  # required for OIDC
-      contents: write
     # Skip on PR close and on release branches
     if: github.event.action != 'closed' && !startsWith(github.ref, 'refs/heads/rc/')
     steps:
