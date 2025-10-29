@@ -83,7 +83,7 @@ jobs:
         - name: Upgrade NPM
           run: npm install -g npm@latest
         - name: Publish to NPM
-          run: npm publish --tag pr --provenance
+          run: npm publish --tag latest --provenance
           env:
             NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         - name: Comment on PR
