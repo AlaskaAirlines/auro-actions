@@ -47,11 +47,16 @@ jobs:
       pull-requests: write # to be able to comment on released pull requests
       id-token: write  # required for OIDC
     steps:
-      - uses: actions/checkout@08c6903cd8c0fde910a37f88322edcfb5dd907a8 # v5.0.0
-      - uses: actions/setup-node@2028fbc5c25fe9cf00d9f06a71cc4710d4507903 # v6.0.0
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
-          cache: npm
+          fetch-depth: 0
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
           node-version: 22
+      - name: Upgrade NPM
+        run: npm install -g npm@latest
       - name: Restore dist/demo directories to cache
         uses: actions/cache@v4
         id: build_cache
@@ -62,14 +67,10 @@ jobs:
             ./node_modules
             ./custom-elements.json
           key: build-22-${{ github.run_id }}
-      - name: Force provenance flag for semantic-release
-        run: npm config set provenance true
-      - name: NPM install
-        run: npm ci
-      - run: npm install --global corepack@latest
-      - run: corepack npm audit signatures
+      - name: Check NPM version
+        run: npm -v
       - name: Release
         run: npx semantic-release@25.0.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          NPM_TOKEN: ${{ secrets.SEMANTIC_RELEASE_BOT_NPM_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
