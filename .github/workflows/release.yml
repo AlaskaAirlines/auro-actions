@@ -2,9 +2,10 @@ on:
   workflow_call:
     secrets:
       NPM_TOKEN:
-        required: true
+        required: false
 
 permissions:
+  id-token: write  # required for OIDC
   actions: read
   contents: read
   deployments: write
@@ -54,6 +55,8 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: 22
+      - name: Upgrade NPM
+        run: npm install -g npm@latest
       - name: Restore dist/demo directories to cache
         uses: actions/cache@v4
         id: build_cache
@@ -65,7 +68,7 @@ jobs:
             ./custom-elements.json
           key: build-22-${{ github.run_id }}
       - name: Release
+        run: npx semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: npx semantic-release
