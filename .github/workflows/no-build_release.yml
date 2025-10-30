@@ -24,14 +24,13 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: "lts/*"
+          node-version: 22
       - name: Force provenance flag for semantic-release
         run: npm config set provenance true
       - name: NPM install
         run: npm ci
-      - run: npm install --global corepack@latest
-      - run: corepack npm audit signatures
       - name: Release
+        run: npx semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: npx semantic-release@25.0.1
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}

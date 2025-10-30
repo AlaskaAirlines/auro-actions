@@ -70,7 +70,7 @@ jobs:
       - name: Check NPM version
         run: npm -v
       - name: Release
-        run: npx semantic-release@25.0.1
+        run: npx semantic-release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
