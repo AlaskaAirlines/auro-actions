@@ -2,7 +2,7 @@ on:
   workflow_call:
     secrets:
       NPM_TOKEN:
-        required: true
+        required: false
 
 permissions:
   id-token: write  # required for OIDC
