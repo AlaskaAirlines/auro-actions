@@ -67,7 +67,7 @@ jobs:
               ./custom-elements.json
             key: build-22-${{ github.run_id }}
         - name: Generate PR release version
-          run: npx --package=@aurodesignsystem/auro-cli -- auro pr-release -p ${{ github.event.pull_request.number }}
+          run: npx --ignore-scripts --package=@aurodesignsystem/auro-cli -- auro pr-release -p ${{ github.event.pull_request.number }}
         - name: Read package.json
           id: package
           uses: actions/github-script@v7
