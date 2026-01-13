@@ -10,6 +10,20 @@ on:
         description: 'Component name for demo deployment'
         required: true
         type: string
+      is-monorepo:
+        description: 'Is this a monorepo setup?'
+        required: false
+        type: boolean
+        default: false
+      cache-dirs:
+        description: 'Directories to cache build artifacts'
+        required: false
+        type: string
+        default: |
+          ./dist
+          ./demo
+          ./node_modules
+          ./custom-elements.json
 
 permissions:
   id-token: write  # required for OIDC
@@ -27,10 +41,11 @@ jobs:
         node-version: [20, 22]
     steps:
       - uses: actions/checkout@v4
-      - uses: AlaskaAirlines/auro-actions/.github/actions/build@main
+      - uses: AlaskaAirlines/auro-actions/.github/actions/build@dev
         with:
           os: ubuntu-latest
           node-version: ${{ matrix.node-version }}
+          cache-dirs: ${{ inputs.cache-dirs }}
   test:
     if: github.event.action != 'closed'
     needs: build
@@ -40,10 +55,11 @@ jobs:
         node-version: [20, 22]
     steps:
       - uses: actions/checkout@v4
-      - uses: AlaskaAirlines/auro-actions/.github/actions/test@main
+      - uses: AlaskaAirlines/auro-actions/.github/actions/test@dev
         with:
           os: ubuntu-latest
           node-version: ${{ matrix.node-version }}
+          cache-dirs: ${{ inputs.cache-dirs }}
   release:
     needs: [build, test]
     runs-on: ubuntu-latest
@@ -60,11 +76,7 @@ jobs:
           uses: actions/cache@v4
           id: build-ubuntu-latest-node-v22
           with:
-            path: |
-              ./dist
-              ./demo
-              ./node_modules
-              ./custom-elements.json
+            path: ${{ inputs.cache-dirs }}
             key: build-22-${{ github.run_id }}
         - name: Generate PR release version
           run: npx --ignore-scripts --package=@aurodesignsystem/auro-cli -- auro pr-release -p ${{ github.event.pull_request.number }}
@@ -110,6 +122,9 @@ jobs:
     runs-on: ubuntu-latest
     # Skip on PR close
     if: github.event.action != 'closed'
+    strategy:
+      matrix:
+        component: ${{ inputs.component }}
     steps:
       - uses: actions/checkout@v4
       - name: Setup Node.js
@@ -120,33 +135,48 @@ jobs:
         uses: actions/cache@v4
         id: build_cache
         with:
-          path: |
-            ./dist
-            ./demo
-            ./node_modules
-            ./custom-elements.json
+          path: ${{ inputs.cache-dirs }}
           key: build-22-${{ github.run_id }}
-      - name: Deploy ${{ inputs.component }} demo
-        uses: AlaskaAirlines/auro-actions/.github/actions/surge@main
+      - name: Set demo path
+        id: demo_path
+        run: |
+          if [ "${{ inputs.is-monorepo }}" = "true" ]; then
+            echo "value=./components/${{ matrix.component }}/demo" >> $GITHUB_OUTPUT
+          else
+            echo "value=./demo" >> $GITHUB_OUTPUT
+          fi
+      - name: Deploy ${{ matrix.component }} demo
+        uses: AlaskaAirlines/auro-actions/.github/actions/surge@dev
         with:
           action: deploy
-          component: ${{ inputs.component }}
+          component: ${{ matrix.component }}
           pr-number: ${{ github.event.pull_request.number }}
-          demo-path: "./demo"
+          demo-path: ${{ steps.demo_path.outputs.value }}
           surge-token: ${{ secrets.AURO_SURGE_TOKEN }}
           github-token: ${{ github.token }}
   teardown:
     runs-on: ubuntu-latest
     # Only run on PR close
     if: github.event.action == 'closed'
+    strategy:
+      matrix:
+        component: ${{ inputs.component }}
     steps:
       - uses: actions/checkout@v4
-      - name: Teardown ${{ inputs.component }} from Surge
-        uses: AlaskaAirlines/auro-actions/.github/actions/surge@main
+      - name: Set demo path
+        id: demo_path
+        run: |
+          if [ "${{ inputs.is-monorepo }}" = "true" ]; then
+            echo "value=./components/${{ matrix.component }}/demo" >> $GITHUB_OUTPUT
+          else
+            echo "value=./demo" >> $GITHUB_OUTPUT
+          fi
+      - name: Teardown ${{ matrix.component }} from Surge
+        uses: AlaskaAirlines/auro-actions/.github/actions/surge@dev
         with:
           action: teardown
-          component: ${{ inputs.component }}
+          component: ${{ matrix.component }}
           pr-number: ${{ github.event.pull_request.number }}
-          demo-path: "./demo"
+          demo-path: ${{ steps.demo_path.outputs.value }}
           surge-token: ${{ secrets.AURO_SURGE_TOKEN }}
           github-token: ${{ github.token }}

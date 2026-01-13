@@ -3,6 +3,16 @@ on:
     secrets:
       NPM_TOKEN:
         required: false
+    inputs:
+      cache-dirs:
+        description: 'Directories to cache build artifacts'
+        required: false
+        type: string
+        default: |
+          ./dist
+          ./demo
+          ./node_modules
+          ./custom-elements.json
 
 permissions:
   id-token: write  # required for OIDC
@@ -20,7 +30,7 @@ jobs:
         node-version: [20, 22]
     steps:
       - uses: actions/checkout@v4
-      - uses: AlaskaAirlines/auro-actions/.github/actions/build@main
+      - uses: AlaskaAirlines/auro-actions/.github/actions/build@dev
         with:
           os: ubuntu-latest
           node-version: ${{ matrix.node-version }}
@@ -32,7 +42,7 @@ jobs:
         node-version: [20, 22]
     steps:
       - uses: actions/checkout@v4
-      - uses: AlaskaAirlines/auro-actions/.github/actions/test@main
+      - uses: AlaskaAirlines/auro-actions/.github/actions/test@dev
         with:
           os: ubuntu-latest
           node-version: ${{ matrix.node-version }}
@@ -62,11 +72,7 @@ jobs:
         uses: actions/cache@v4
         id: build_cache
         with:
-          path: |
-            ./dist
-            ./demo
-            ./node_modules
-            ./custom-elements.json
+          path: ${{ inputs.cache-dirs }}
           key: build-22-${{ github.run_id }}
       - name: Release
         run: npx semantic-release

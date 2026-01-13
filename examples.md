@@ -61,7 +61,14 @@ jobs:
   action:
     uses: AlaskaAirlines/auro-actions/.github/workflows/pull-request.yml@main
     with:
-      component: kabab-case-name
+      component: ['kabab-case-name']
+      is-monorepo: true
+      cache-dirs: |
+        ./components/**/dist
+        ./components/**/demo
+        ./components/**/node_modules
+        ./node_modules
+        ./custom-elements.json
     secrets:
       NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
       AURO_SURGE_TOKEN: ${{ secrets.AURO_SURGE_TOKEN }}
@@ -156,4 +163,10 @@ jobs:
     uses: AlaskaAirlines/auro-actions/.github/workflows/release.yml@main
     secrets:
       NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+    with:
+      cache-dirs: |
+        ./dist
+        ./demo
+        ./node_modules
+        ./custom-elements.json
 ```
