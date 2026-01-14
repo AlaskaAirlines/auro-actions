@@ -72,7 +72,8 @@ jobs:
         uses: actions/cache@v4
         id: build_cache
         with:
-          path: ${{ inputs.cache-dirs }}
+          path: |
+            ${{ inputs.cache-dirs }}
           key: build-22-${{ github.run_id }}
       - name: Release
         run: npx semantic-release
