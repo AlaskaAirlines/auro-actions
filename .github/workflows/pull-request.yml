@@ -124,7 +124,7 @@ jobs:
     if: github.event.action != 'closed'
     strategy:
       matrix:
-        component: ${{ inputs.component }}
+        component: ${{ fromJson(inputs.component) }}
     steps:
       - uses: actions/checkout@v4
       - name: Setup Node.js
@@ -160,7 +160,7 @@ jobs:
     if: github.event.action == 'closed'
     strategy:
       matrix:
-        component: ${{ inputs.component }}
+        component: ${{ fromJson(inputs.component) }}
     steps:
       - uses: actions/checkout@v4
       - name: Set demo path

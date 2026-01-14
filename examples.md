@@ -61,7 +61,7 @@ jobs:
   action:
     uses: AlaskaAirlines/auro-actions/.github/workflows/pull-request.yml@main
     with:
-      component: ['kabab-case-name']
+      component: '["kabab-case-name"]' // must always be an array in a string
       is-monorepo: true
       cache-dirs: |
         ./components/**/dist
