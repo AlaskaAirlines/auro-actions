@@ -34,6 +34,7 @@ jobs:
         with:
           os: ubuntu-latest
           node-version: ${{ matrix.node-version }}
+          cache-dirs: ${{ inputs.cache-dirs }}
   test:
     needs: [build]
     runs-on: ubuntu-latest
@@ -46,6 +47,7 @@ jobs:
         with:
           os: ubuntu-latest
           node-version: ${{ matrix.node-version }}
+          cache-dirs: ${{ inputs.cache-dirs }}
   release:
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
@@ -72,8 +74,7 @@ jobs:
         uses: actions/cache@v4
         id: build_cache
         with:
-          path: |
-            ${{ inputs.cache-dirs }}
+          path: ${{ inputs.cache-dirs }}
           key: build-22-${{ github.run_id }}
       - name: Release
         run: npx semantic-release

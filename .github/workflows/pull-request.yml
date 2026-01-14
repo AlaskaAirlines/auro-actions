@@ -45,8 +45,7 @@ jobs:
         with:
           os: ubuntu-latest
           node-version: ${{ matrix.node-version }}
-          cache-dirs: |
-            ${{ inputs.cache-dirs }}
+          cache-dirs: ${{ inputs.cache-dirs }}
   test:
     if: github.event.action != 'closed'
     needs: build
@@ -60,8 +59,7 @@ jobs:
         with:
           os: ubuntu-latest
           node-version: ${{ matrix.node-version }}
-          cache-dirs: |
-            ${{ inputs.cache-dirs }}
+          cache-dirs: ${{ inputs.cache-dirs }}
   release:
     needs: [build, test]
     runs-on: ubuntu-latest
@@ -78,8 +76,7 @@ jobs:
           uses: actions/cache@v4
           id: build-ubuntu-latest-node-v22
           with:
-            path: |
-              ${{ inputs.cache-dirs }}
+            path: ${{ inputs.cache-dirs }}
             key: build-22-${{ github.run_id }}
         - name: Generate PR release version
           run: npx --ignore-scripts --package=@aurodesignsystem/auro-cli -- auro pr-release -p ${{ github.event.pull_request.number }}
@@ -138,8 +135,7 @@ jobs:
         uses: actions/cache@v4
         id: build_cache
         with:
-          path: |
-            ${{ inputs.cache-dirs }}
+          path: ${{ inputs.cache-dirs }}
           key: build-22-${{ github.run_id }}
       - name: Set demo path
         id: demo_path
