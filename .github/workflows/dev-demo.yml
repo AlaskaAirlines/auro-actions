@@ -29,11 +29,13 @@ jobs:
       - name: Build
         run: ${{ inputs.build-command }}
       - name: Deploy
-        uses: peaceiris/actions-gh-pages@v4
+        uses: JamesIves/github-pages-deploy-action@v4
         # If you're changing the branch from main,
         # also change the `main` in `refs/heads/main`
         # below accordingly.
         if: github.ref == 'refs/heads/dev'
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ${{ inputs.publish-dir }}
+          token: ${{ secrets.GITHUB_TOKEN }}
+          folder: ${{ inputs.publish-dir }}
+          clean-exclude: pr-preview/
+          force: false
