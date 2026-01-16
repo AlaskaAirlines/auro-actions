@@ -17,7 +17,7 @@ inputs:
   action:
     description: "Action to perform: 'deploy', 'remove', 'auto', or 'none'"
     required: false
-    default: "auto"
+    default: "deploy"
   wait-for-pages-deployment:
     description: "Whether to wait for GitHub Pages deployment to complete"
     required: false

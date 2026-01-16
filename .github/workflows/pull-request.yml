@@ -140,3 +140,19 @@ jobs:
           source-dir: ${{ inputs.demo-dir }}
           umbrella-dir: 'pr-preview'
           github-token: ${{ secrets.GITHUB_TOKEN }}
+  preview-cleanup:
+    if: github.event.action == 'closed'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Delete PR preview
+        uses: AlaskaAirlines/auro-actions/.github/actions/pr-preview@dev
+        with:
+          source-dir: ${{ inputs.demo-dir }}
+          umbrella-dir: 'pr-preview'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          action: 'remove'
