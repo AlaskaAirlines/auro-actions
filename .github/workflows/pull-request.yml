@@ -4,15 +4,16 @@ on:
       NPM_TOKEN:
         required: false
     inputs:
-      component:
-        description: 'Component name for demo deployment'
-        required: true
-        type: string
-      is-monorepo:
-        description: 'Is this a monorepo setup?'
+      demo-dir:
+        description: 'Directory containing demo to publish to GitHub Pages'
         required: false
-        type: boolean
-        default: false
+        default: './demo'
+        type: string
+      demo-build-command:
+        description: 'Extra command to run specifically to build the demo for pr-preview'
+        required: false
+        default: ''
+        type: string
       cache-dirs:
         description: 'Directories to cache build artifacts'
         required: false
@@ -118,9 +119,6 @@ jobs:
   preview:
     needs: [build, test]
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        component: ${{ fromJson(inputs.component) }}
     steps:
       - uses: actions/checkout@v4
       - name: Setup Node.js
@@ -133,19 +131,12 @@ jobs:
         with:
           path: ${{ inputs.cache-dirs }}
           key: build-22-${{ github.run_id }}
-      - name: Set demo path
-        id: demo_path
-        run: |
-          if [ "${{ inputs.is-monorepo }}" = "true" ]; then
-            # For monorepo, deploy component demo
-            echo "value=./components/${{ matrix.component }}/demo" >> $GITHUB_OUTPUT
-          else
-            # For single component, deploy demo directory
-            echo "value=./demo" >> $GITHUB_OUTPUT
-          fi
-      - name: Deploy ${{ matrix.component }} preview
+      - name: Run additional build command
+        if: ${{ inputs.demo-build-command != '' }}
+        run: ${{ inputs.demo-build-command }}
+      - name: Deploy PR preview
         uses: AlaskaAirlines/auro-actions/.github/actions/pr-preview@dev
         with:
-          source-dir: ${{ steps.demo_path.outputs.value }}
-          umbrella-dir: 'pr-preview/${{ matrix.component }}'
+          source-dir: ${{ inputs.demo-dir }}
+          umbrella-dir: 'pr-preview'
           github-token: ${{ secrets.GITHUB_TOKEN }}
