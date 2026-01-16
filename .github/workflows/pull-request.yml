@@ -3,8 +3,6 @@ on:
     secrets:
       NPM_TOKEN:
         required: false
-      AURO_SURGE_TOKEN:
-        required: true
     inputs:
       component:
         description: 'Component name for demo deployment'
@@ -117,11 +115,9 @@ jobs:
               ```
 
               [View on npmjs.com](https://www.npmjs.com/package/${{ steps.package.outputs.name }}/v/${{ steps.package.outputs.version }})
-  deploy:
+  preview:
     needs: [build, test]
     runs-on: ubuntu-latest
-    # Skip on PR close
-    if: github.event.action != 'closed'
     strategy:
       matrix:
         component: ${{ fromJson(inputs.component) }}
@@ -141,42 +137,15 @@ jobs:
         id: demo_path
         run: |
           if [ "${{ inputs.is-monorepo }}" = "true" ]; then
+            # For monorepo, deploy component demo
             echo "value=./components/${{ matrix.component }}/demo" >> $GITHUB_OUTPUT
           else
+            # For single component, deploy demo directory
             echo "value=./demo" >> $GITHUB_OUTPUT
           fi
-      - name: Deploy ${{ matrix.component }} demo
-        uses: AlaskaAirlines/auro-actions/.github/actions/surge@dev
+      - name: Deploy ${{ matrix.component }} preview
+        uses: AlaskaAirlines/auro-actions/.github/actions/pr-preview@dev
         with:
-          action: deploy
-          component: ${{ matrix.component }}
-          pr-number: ${{ github.event.pull_request.number }}
-          demo-path: ${{ steps.demo_path.outputs.value }}
-          surge-token: ${{ secrets.AURO_SURGE_TOKEN }}
-          github-token: ${{ github.token }}
-  teardown:
-    runs-on: ubuntu-latest
-    # Only run on PR close
-    if: github.event.action == 'closed'
-    strategy:
-      matrix:
-        component: ${{ fromJson(inputs.component) }}
-    steps:
-      - uses: actions/checkout@v4
-      - name: Set demo path
-        id: demo_path
-        run: |
-          if [ "${{ inputs.is-monorepo }}" = "true" ]; then
-            echo "value=./components/${{ matrix.component }}/demo" >> $GITHUB_OUTPUT
-          else
-            echo "value=./demo" >> $GITHUB_OUTPUT
-          fi
-      - name: Teardown ${{ matrix.component }} from Surge
-        uses: AlaskaAirlines/auro-actions/.github/actions/surge@dev
-        with:
-          action: teardown
-          component: ${{ matrix.component }}
-          pr-number: ${{ github.event.pull_request.number }}
-          demo-path: ${{ steps.demo_path.outputs.value }}
-          surge-token: ${{ secrets.AURO_SURGE_TOKEN }}
-          github-token: ${{ github.token }}
+          source-dir: ${{ steps.demo_path.outputs.value }}
+          umbrella-dir: 'pr-preview/${{ matrix.component }}'
+          github-token: ${{ secrets.GITHUB_TOKEN }}

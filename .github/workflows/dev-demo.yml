@@ -1,5 +1,16 @@
 on:
   workflow_call:
+    inputs:
+      publish-dir:
+        description: 'Directory to publish to GitHub Pages'
+        required: false
+        default: './demo'
+        type: string
+      build-command:
+        description: 'Command to build the project'
+        required: false
+        default: 'npm run build'
+        type: string
 
 jobs:
   deploy:
@@ -16,7 +27,7 @@ jobs:
       - name: Install
         run: npm ci
       - name: Build
-        run: npm run build
+        run: ${{ inputs.build-command }}
       - name: Deploy
         uses: peaceiris/actions-gh-pages@v4
         # If you're changing the branch from main,
@@ -25,4 +36,4 @@ jobs:
         if: github.ref == 'refs/heads/dev'
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./demo
+          publish_dir: ${{ inputs.publish-dir }}
