@@ -21,7 +21,7 @@ inputs:
   wait-for-pages-deployment:
     description: "Whether to wait for GitHub Pages deployment to complete"
     required: false
-    default: "true"
+    default: "false"
   comment:
     description: "Whether to leave a sticky comment on the PR"
     required: false
