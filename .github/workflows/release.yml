@@ -30,7 +30,7 @@ jobs:
         node-version: [20, 22]
     steps:
       - uses: actions/checkout@v4
-      - uses: AlaskaAirlines/auro-actions/.github/actions/build@dev
+      - uses: AlaskaAirlines/auro-actions/.github/actions/build@main
         with:
           os: ubuntu-latest
           node-version: ${{ matrix.node-version }}
@@ -43,7 +43,7 @@ jobs:
         node-version: [20, 22]
     steps:
       - uses: actions/checkout@v4
-      - uses: AlaskaAirlines/auro-actions/.github/actions/test@dev
+      - uses: AlaskaAirlines/auro-actions/.github/actions/test@main
         with:
           os: ubuntu-latest
           node-version: ${{ matrix.node-version }}

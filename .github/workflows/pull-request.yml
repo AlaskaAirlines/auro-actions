@@ -40,7 +40,7 @@ jobs:
         node-version: [20, 22]
     steps:
       - uses: actions/checkout@v4
-      - uses: AlaskaAirlines/auro-actions/.github/actions/build@dev
+      - uses: AlaskaAirlines/auro-actions/.github/actions/build@main
         with:
           os: ubuntu-latest
           node-version: ${{ matrix.node-version }}
@@ -54,7 +54,7 @@ jobs:
         node-version: [20, 22]
     steps:
       - uses: actions/checkout@v4
-      - uses: AlaskaAirlines/auro-actions/.github/actions/test@dev
+      - uses: AlaskaAirlines/auro-actions/.github/actions/test@main
         with:
           os: ubuntu-latest
           node-version: ${{ matrix.node-version }}
@@ -135,7 +135,7 @@ jobs:
         if: ${{ inputs.demo-build-command != '' }}
         run: ${{ inputs.demo-build-command }}
       - name: Deploy PR preview
-        uses: AlaskaAirlines/auro-actions/.github/actions/pr-preview@dev
+        uses: AlaskaAirlines/auro-actions/.github/actions/pr-preview@main
         with:
           source-dir: ${{ inputs.demo-dir }}
           umbrella-dir: 'pr-preview'
@@ -150,7 +150,7 @@ jobs:
         with:
           node-version: 22
       - name: Delete PR preview
-        uses: AlaskaAirlines/auro-actions/.github/actions/pr-preview@dev
+        uses: AlaskaAirlines/auro-actions/.github/actions/pr-preview@main
         with:
           source-dir: ${{ inputs.demo-dir }}
           umbrella-dir: 'pr-preview'
