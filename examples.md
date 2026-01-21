@@ -61,8 +61,6 @@ jobs:
   action:
     uses: AlaskaAirlines/auro-actions/.github/workflows/pull-request.yml@main
     with:
-      component: '["kabab-case-name"]' // must always be an array in a string
-      is-monorepo: true
       cache-dirs: |
         ./components/**/dist
         ./components/**/demo
@@ -71,7 +69,6 @@ jobs:
         ./custom-elements.json
     secrets:
       NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-      AURO_SURGE_TOKEN: ${{ secrets.AURO_SURGE_TOKEN }}
 ```
 
 ---
