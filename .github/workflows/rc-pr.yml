@@ -1,0 +1,59 @@
+on:
+  workflow_call:
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  ensure-pr:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Create PR if missing
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          # Format date as YYYY-MM-DD
+          DATE=$(date +%Y-%m-%d)
+
+          PR_COUNT=$(gh pr list \
+            --base main \
+            --head dev \
+            --state open \
+            --json number \
+            --jq 'length')
+
+          if [ "$PR_COUNT" -eq 0 ]; then
+            gh pr create \
+              --base main \
+              --head dev \
+              --title "Merge dev into main • $DATE" \
+              --body "This PR is automatically created and will update as new commits are pushed to dev."
+          else
+            echo "PR already exists. It will update automatically."
+
+
+
+NEW PROCESS
+1. Check if there is an open PR from 'rc/*' to 'main'.
+2. If NO
+  create a ticket for the RC
+  create a new RC branch from 'dev' titled 'rc/{issue-number}'
+  create new RC PR
+    - title: "RC {issue-number}"
+    - content:
+        normal PR template
+        fill out the summary with the id to the issue created in step 1
+3. If YES
+  update existing ticket content with new commit content
+  update existing PR content to reset validation checkmarks
+  rebase RC branch off of dev
+  make sure existing approvals are removed
+  Update existing RC PR with new changes from 'dev' branch
+
+
+Should we provide a manual way to launch the action?
