@@ -1,0 +1,51 @@
+name: "pr-preview"
+description: "Deploy PR previews to GitHub Pages using rossjrw/pr-preview-action"
+
+inputs:
+  source-dir:
+    description: "Directory that contains the files to deploy (default: repository root)"
+    required: false
+    default: "."
+  preview-branch:
+    description: "Branch to save previews to (should be your GitHub Pages branch)"
+    required: false
+    default: "gh-pages"
+  umbrella-dir:
+    description: "Directory to place previews in on the preview branch"
+    required: false
+    default: "pr-preview"
+  action:
+    description: "Action to perform: 'deploy', 'remove', 'auto', or 'none'"
+    required: false
+    default: "deploy"
+  wait-for-pages-deployment:
+    description: "Whether to wait for GitHub Pages deployment to complete"
+    required: false
+    default: "false"
+  comment:
+    description: "Whether to leave a sticky comment on the PR"
+    required: false
+    default: "true"
+  qr-code:
+    description: "Whether to include a QR code in the sticky comment"
+    required: false
+    default: "true"
+  github-token:
+    description: "GitHub token for authentication"
+    required: false
+    default: ${{ github.token }}
+
+runs:
+  using: "composite"
+  steps:
+    - name: Deploy PR Preview
+      uses: rossjrw/pr-preview-action@v1.8.0
+      with:
+        source-dir: ${{ inputs.source-dir }}
+        preview-branch: ${{ inputs.preview-branch }}
+        umbrella-dir: ${{ inputs.umbrella-dir }}
+        action: ${{ inputs.action }}
+        wait-for-pages-deployment: ${{ inputs.wait-for-pages-deployment }}
+        comment: ${{ inputs.comment }}
+        qr-code: ${{ inputs.qr-code }}
+        token: ${{ inputs.github-token }}

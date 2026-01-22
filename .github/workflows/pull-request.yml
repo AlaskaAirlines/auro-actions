@@ -3,17 +3,30 @@ on:
     secrets:
       NPM_TOKEN:
         required: false
-      AURO_SURGE_TOKEN:
-        required: true
     inputs:
-      component:
-        description: 'Component name for demo deployment'
-        required: true
+      demo-dir:
+        description: 'Directory containing demo to publish to GitHub Pages'
+        required: false
+        default: './demo'
         type: string
+      demo-build-command:
+        description: 'Extra command to run specifically to build the demo for pr-preview'
+        required: false
+        default: ''
+        type: string
+      cache-dirs:
+        description: 'Directories to cache build artifacts'
+        required: false
+        type: string
+        default: |
+          ./dist
+          ./demo
+          ./node_modules
+          ./custom-elements.json
 
 permissions:
   id-token: write  # required for OIDC
-  contents: read
+  contents: write
   deployments: write
   issues: write
   pull-requests: write
@@ -31,6 +44,7 @@ jobs:
         with:
           os: ubuntu-latest
           node-version: ${{ matrix.node-version }}
+          cache-dirs: ${{ inputs.cache-dirs }}
   test:
     if: github.event.action != 'closed'
     needs: build
@@ -44,6 +58,7 @@ jobs:
         with:
           os: ubuntu-latest
           node-version: ${{ matrix.node-version }}
+          cache-dirs: ${{ inputs.cache-dirs }}
   release:
     needs: [build, test]
     runs-on: ubuntu-latest
@@ -60,11 +75,7 @@ jobs:
           uses: actions/cache@v4
           id: build-ubuntu-latest-node-v22
           with:
-            path: |
-              ./dist
-              ./demo
-              ./node_modules
-              ./custom-elements.json
+            path: ${{ inputs.cache-dirs }}
             key: build-22-${{ github.run_id }}
         - name: Generate PR release version
           run: npx --ignore-scripts --package=@aurodesignsystem/auro-cli -- auro pr-release -p ${{ github.event.pull_request.number }}
@@ -105,11 +116,9 @@ jobs:
               ```
 
               [View on npmjs.com](https://www.npmjs.com/package/${{ steps.package.outputs.name }}/v/${{ steps.package.outputs.version }})
-  deploy:
+  preview:
     needs: [build, test]
     runs-on: ubuntu-latest
-    # Skip on PR close
-    if: github.event.action != 'closed'
     steps:
       - uses: actions/checkout@v4
       - name: Setup Node.js
@@ -120,33 +129,30 @@ jobs:
         uses: actions/cache@v4
         id: build_cache
         with:
-          path: |
-            ./dist
-            ./demo
-            ./node_modules
-            ./custom-elements.json
+          path: ${{ inputs.cache-dirs }}
           key: build-22-${{ github.run_id }}
-      - name: Deploy ${{ inputs.component }} demo
-        uses: AlaskaAirlines/auro-actions/.github/actions/surge@main
+      - name: Run additional build command
+        if: ${{ inputs.demo-build-command != '' }}
+        run: ${{ inputs.demo-build-command }}
+      - name: Deploy PR preview
+        uses: AlaskaAirlines/auro-actions/.github/actions/pr-preview@main
         with:
-          action: deploy
-          component: ${{ inputs.component }}
-          pr-number: ${{ github.event.pull_request.number }}
-          demo-path: "./demo"
-          surge-token: ${{ secrets.AURO_SURGE_TOKEN }}
-          github-token: ${{ github.token }}
-  teardown:
-    runs-on: ubuntu-latest
-    # Only run on PR close
+          source-dir: ${{ inputs.demo-dir }}
+          umbrella-dir: 'pr-preview'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+  preview-cleanup:
     if: github.event.action == 'closed'
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Teardown ${{ inputs.component }} from Surge
-        uses: AlaskaAirlines/auro-actions/.github/actions/surge@main
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
         with:
-          action: teardown
-          component: ${{ inputs.component }}
-          pr-number: ${{ github.event.pull_request.number }}
-          demo-path: "./demo"
-          surge-token: ${{ secrets.AURO_SURGE_TOKEN }}
-          github-token: ${{ github.token }}
+          node-version: 22
+      - name: Delete PR preview
+        uses: AlaskaAirlines/auro-actions/.github/actions/pr-preview@main
+        with:
+          source-dir: ${{ inputs.demo-dir }}
+          umbrella-dir: 'pr-preview'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+          action: 'remove'

@@ -7,6 +7,9 @@ inputs:
   node-version:
     description: 'Node.js version to use'
     required: true
+  cache-dirs:
+    description: 'Directories to cache build artifacts'
+    required: true
 runs:
   using: "composite"
   steps:
@@ -26,9 +29,5 @@ runs:
       uses: actions/cache@v4
       id: build_cache
       with:
-        path: |
-          ./dist
-          ./demo
-          ./node_modules
-          ./custom-elements.json
+        path: ${{ inputs.cache-dirs }}
         key: build-${{ inputs.node-version }}-${{ github.run_id }}
