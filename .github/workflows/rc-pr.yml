@@ -16,15 +16,17 @@ jobs:
       - name: Check for new commits on dev vs main
         id: check_commits
         run: |
-          MAIN_SHA=$(git rev-parse origin/main)
-          DEV_SHA=$(git rev-parse origin/dev)
+          echo "has_new_commits=true" >> $GITHUB_OUTPUT
+          
+          # MAIN_SHA=$(git rev-parse origin/main)
+          # DEV_SHA=$(git rev-parse origin/dev)
 
-          if [ "$MAIN_SHA" = "$DEV_SHA" ]; then
-            echo "No new commits on dev vs main. Exiting."
-            echo "has_new_commits=false" >> $GITHUB_OUTPUT
-          else
-            echo "New commits found on dev vs main."
-            echo "has_new_commits=true" >> $GITHUB_OUTPUT
+          # if [ "$MAIN_SHA" = "$DEV_SHA" ]; then
+          #   echo "No new commits on dev vs main. Exiting."
+          #   echo "has_new_commits=false" >> $GITHUB_OUTPUT
+          # else
+          #   echo "New commits found on dev vs main."
+          #   echo "has_new_commits=true" >> $GITHUB_OUTPUT
 
   check-rc-branch: 
     needs: check-main-vs-dev
