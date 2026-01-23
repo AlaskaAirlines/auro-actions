@@ -23,6 +23,7 @@ jobs:
 
   check-rc-branch: 
     needs: check-main-vs-dev
+
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -31,7 +32,7 @@ jobs:
       - name: Check for existing RC branch
         id: check_rc_branch
         run: |
-          console.log("Checking for existing RC branch...", ${{ needs.check-main-vs-dev.outputs }});
+          console.log("Checking for existing RC branch...", ${{ toJson(needs.check-main-vs-dev.outputs) }});
 
           # check for existing PR from rc/* to main
           RC_BRANCH_COUNT=$(git branch -r | grep -c "origin/rc/" || echo "0")
