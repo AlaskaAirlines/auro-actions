@@ -8,6 +8,8 @@ permissions:
 jobs:
   check-main-vs-dev:
     runs-on: ubuntu-latest
+    outputs:
+      has_new_commits: ${{ steps.check_commits.outputs.has_new_commits }}
 
     steps:
       - name: Checkout repository
@@ -20,7 +22,6 @@ jobs:
           script: |
             console.log("Checking for new commits on 'dev' vs 'main'...");
             core.setOutput('has_new_commits', 'true');
-            console.log("New commits found.", has_new_commits);
 
 
   check-rc-branch: 
