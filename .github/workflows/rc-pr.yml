@@ -20,6 +20,7 @@ jobs:
           script: |
             console.log("Checking for new commits on 'dev' vs 'main'...");
             core.setOutput('has_new_commits', 'true');
+
   check-rc-branch: 
     needs: check-main-vs-dev
     runs-on: ubuntu-latest
