@@ -15,22 +15,15 @@ jobs:
 
       - name: Check for new commits on dev vs main
         id: check_commits
-        run: |
-          echo "has_new_commits=true" >> $GITHUB_OUTPUT
-          
-          # MAIN_SHA=$(git rev-parse origin/main)
-          # DEV_SHA=$(git rev-parse origin/dev)
-
-          # if [ "$MAIN_SHA" = "$DEV_SHA" ]; then
-          #   echo "No new commits on dev vs main. Exiting."
-          #   echo "has_new_commits=false" >> $GITHUB_OUTPUT
-          # else
-          #   echo "New commits found on dev vs main."
-          #   echo "has_new_commits=true" >> $GITHUB_OUTPUT
+        uses: actions/github-script@v6
+        with:
+          script: |
+            console.log("Checking for new commits on 'dev' vs 'main'...");
+            core.setOutput('has_new_commits', 'true');
 
   check-rc-branch: 
     needs: check-main-vs-dev
-    if: needs.check-main-vs-dev.outputs.has_new_commits == 'true'
+    if: needs.check-main-vs-dev.check_commits.outputs.has_new_commits == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
