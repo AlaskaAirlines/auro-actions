@@ -20,10 +20,8 @@ jobs:
           script: |
             console.log("Checking for new commits on 'dev' vs 'main'...");
             core.setOutput('has_new_commits', 'true');
-
   check-rc-branch: 
     needs: check-main-vs-dev
-    if: needs.check-main-vs-dev.check_commits.outputs.has_new_commits == 'true'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
@@ -32,6 +30,8 @@ jobs:
       - name: Check for existing RC branch
         id: check_rc_branch
         run: |
+          console.log("Checking for existing RC branch...", ${{ needs.check-main-vs-dev.outputs }});
+
           # check for existing PR from rc/* to main
           RC_BRANCH_COUNT=$(git branch -r | grep -c "origin/rc/" || echo "0")
 
