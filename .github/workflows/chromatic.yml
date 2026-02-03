@@ -6,9 +6,15 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           fetch-depth: 0
+          # 👇 Tells the checkout which commit hash to reference
+          ref: ${{ github.event.pull_request.head.ref }}
+        env:
+          CHROMATIC_BRANCH: ${{ github.event.pull_request.head.ref || github.ref_name }}
+          CHROMATIC_SHA: ${{ github.event.pull_request.head.sha || github.ref }}
+          CHROMATIC_SLUG: ${{ github.repository }}
       - uses: actions/setup-node@v4
         with:
           node-version: 22.20.0
@@ -20,3 +26,6 @@ jobs:
         with:
           # ⚠️ Make sure to configure a `CHROMATIC_PROJECT_TOKEN` repository secret
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+          onlyChanged: true,
+          exitZeroOnChanges: false,
+          skip: "dependabot/**" # 👈 Option to skip Chromatic for certain branches
