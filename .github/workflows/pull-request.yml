@@ -3,6 +3,8 @@ on:
     secrets:
       NPM_TOKEN:
         required: false
+      AURO_SURGE_TOKEN:
+        required: false
     inputs:
       demo-dir:
         description: 'Directory containing demo to publish to GitHub Pages'
