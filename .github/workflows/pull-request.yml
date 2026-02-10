@@ -6,6 +6,11 @@ on:
       AURO_SURGE_TOKEN:
         required: false
     inputs:
+      component:
+        description: 'Not used currently, kept to prevent existing workflows from breaking.'
+        required: false
+        default: ''
+        type: string
       demo-dir:
         description: 'Directory containing demo to publish to GitHub Pages'
         required: false
