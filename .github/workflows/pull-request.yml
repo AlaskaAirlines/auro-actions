@@ -124,7 +124,7 @@ jobs:
 
               [View on npmjs.com](https://www.npmjs.com/package/${{ steps.package.outputs.name }}/v/${{ steps.package.outputs.version }})
   preview:
-    needs: [build, test]
+    needs: [build]
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
