@@ -21,3 +21,5 @@ jobs:
           node-version: 22
       - name: Run auro rc-workflow
         run: npx --ignore-scripts --package=@aurodesignsystem/auro-cli -- auro rc-workflow
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
