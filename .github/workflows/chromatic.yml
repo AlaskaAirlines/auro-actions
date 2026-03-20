@@ -6,6 +6,7 @@ on:
 
 jobs:
   run:
+    if: github.event_name != 'push'
     runs-on: ubuntu-latest
     steps:
       - name: Checkout code
@@ -28,7 +29,32 @@ jobs:
           onlyChanged: true
           exitZeroOnChanges: false
           skip: "dependabot/**" # 👈 Option to skip Chromatic for certain branches
+          autoAcceptChanges: "dev"
         env:
           CHROMATIC_BRANCH: ${{ github.event.pull_request.head.ref || github.ref_name }}
           CHROMATIC_SHA: ${{ github.event.pull_request.head.sha || github.sha }}
+          CHROMATIC_SLUG: ${{ github.repository }}
+  dev-baseline:
+    if: github.ref == 'refs/heads/dev' && github.event_name == 'push'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.20.0
+      - name: Install dependencies
+        run: npm ci
+      - name: Run Chromatic on dev push
+        uses: chromaui/action@latest
+        with:
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+          autoAcceptChanges: true
+          onlyChanged: true
+          skip: "dependabot/**"
+        env:
+          CHROMATIC_BRANCH: dev
+          CHROMATIC_SHA: ${{ github.sha }}
           CHROMATIC_SLUG: ${{ github.repository }}
