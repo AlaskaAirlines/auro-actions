@@ -15,5 +15,5 @@ jobs:
       - uses: AlaskaAirlines/auro-actions/.github/actions/check-commits@main
         with:
           os: ubuntu-latest
-          node-version: 22.22.3
+          node-version: 22.22.1
           github-token: ${{ secrets.GITHUB_TOKEN }}

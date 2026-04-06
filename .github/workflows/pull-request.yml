@@ -44,7 +44,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [20, 22.22.3]
+        node-version: [20, 22.22.1]
     steps:
       - uses: actions/checkout@v4
       - uses: AlaskaAirlines/auro-actions/.github/actions/build@main
@@ -58,7 +58,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [20, 22.22.3]
+        node-version: [20, 22.22.1]
     steps:
       - uses: actions/checkout@v4
       - uses: AlaskaAirlines/auro-actions/.github/actions/test@main
@@ -76,7 +76,7 @@ jobs:
         - name: Setup Node.js
           uses: actions/setup-node@v4
           with:
-            node-version: 22.22.3
+            node-version: 22.22.1
             registry-url: 'https://registry.npmjs.org'
         - name: Upgrade NPM
           run: npm install -g npm@11.12.1
@@ -131,7 +131,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22.22.3
+          node-version: 22.22.1
       - name: Restore dist/demo directories to cache
         uses: actions/cache@v4
         id: build_cache
@@ -155,7 +155,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22.22.3
+          node-version: 22.22.1
       - name: Delete PR preview
         uses: AlaskaAirlines/auro-actions/.github/actions/pr-preview@main
         with:
