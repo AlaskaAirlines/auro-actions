@@ -100,7 +100,7 @@ jobs:
               return packageJson;
             result-encoding: string
         - name: Upgrade NPM
-          run: npm install -g npm@latest
+          run: node $(which npm) install -g npm@9.5.0
         - name: Publish to NPM
           run: npm publish --tag latest --provenance
           env:
