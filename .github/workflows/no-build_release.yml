@@ -35,7 +35,7 @@ jobs:
       - name: NPM install
         run: npm ci
       - name: Upgrade NPM
-        run: npm install -g npm@latest
+        run: node $(which npm) install -g npm@11.12.1
       - name: Release
         run: npx semantic-release
         env:
