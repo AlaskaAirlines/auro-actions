@@ -43,7 +43,7 @@ jobs:
               return packageJson;
             result-encoding: string
         - name: Publish to NPM
-          run: npm publish --tag latest --provenance
+          run: npm publish --tag latest --provenance --ignore-scripts
           env:
             NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
         - name: Comment on PR
