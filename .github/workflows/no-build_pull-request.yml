@@ -21,12 +21,12 @@ jobs:
         - name: Setup Node.js
           uses: actions/setup-node@v4
           with:
-            node-version: 22
+            node-version: 22.22.3
             registry-url: 'https://registry.npmjs.org'
+        - name: Upgrade NPM
+          run: npm install -g npm@11.12.1
         - name: NPM install
           run: npm ci
-        - name: Upgrade NPM
-          run: node $(which npm) install -g npm@11.12.1
         - name: Generate PR release version
           run: npx --ignore-scripts --package=@aurodesignsystem/auro-cli -- auro pr-release -p ${{ github.event.pull_request.number }}
         - name: Read package.json

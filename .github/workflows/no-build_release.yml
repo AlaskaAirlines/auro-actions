@@ -31,11 +31,11 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 22.22.3
+      - name: Upgrade NPM
+        run: npm install -g npm@11.12.1
       - name: NPM install
         run: npm ci
-      - name: Upgrade NPM
-        run: node $(which npm) install -g npm@11.12.1
       - name: Release
         run: npx semantic-release
         env:
