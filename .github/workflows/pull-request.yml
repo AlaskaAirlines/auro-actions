@@ -85,7 +85,7 @@ jobs:
           id: build-ubuntu-latest-node-v22
           with:
             path: ${{ inputs.cache-dirs }}
-            key: build-22-${{ github.run_id }}
+            key: build-22.22.1-${{ github.run_id }}
         - name: Generate PR release version
           run: npx --ignore-scripts --package=@aurodesignsystem/auro-cli -- auro pr-release -p ${{ github.event.pull_request.number }}
         - name: Read package.json
@@ -137,7 +137,7 @@ jobs:
         id: build_cache
         with:
           path: ${{ inputs.cache-dirs }}
-          key: build-22-${{ github.run_id }}
+          key: build-22.22.1-${{ github.run_id }}
       - name: Run additional build command
         if: ${{ inputs.demo-build-command != '' }}
         run: ${{ inputs.demo-build-command }}
