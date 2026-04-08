@@ -1,5 +1,9 @@
 on:
   workflow_call:
+    secrets:
+      GH_TOKEN:
+        description: 'Personal access token. When provided, the RC branch push will trigger downstream workflows naturally, including PR checks. Falls back to explicit workflow dispatch.'
+        required: false
 
 permissions:
   contents: write
@@ -11,6 +15,8 @@ permissions:
 jobs:
   workflow:
     runs-on: ubuntu-latest
+    env:
+      HAS_PAT: ${{ secrets.GH_TOKEN != '' }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -23,8 +29,9 @@ jobs:
       - name: Run auro rc-workflow
         run: npx --ignore-scripts --package=@aurodesignsystem/auro-cli -- auro rc-workflow
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      - name: Trigger release workflow on RC branch
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN || secrets.GITHUB_TOKEN }}
+      - name: Trigger release workflow on RC branch (GITHUB_TOKEN fallback)
+        if: env.HAS_PAT != 'true'
         run: |
           RC_BRANCH=$(git ls-remote --heads origin 'rc/*' | sort -t'/' -k3 -V | tail -1 | awk '{print $2}' | sed 's|refs/heads/||')
           if [ -n "$RC_BRANCH" ]; then
