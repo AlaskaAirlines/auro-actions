@@ -6,6 +6,7 @@ permissions:
   deployments: write
   issues: write
   pull-requests: write
+  actions: write
 
 jobs:
   workflow:
@@ -23,4 +24,15 @@ jobs:
         run: npx --ignore-scripts --package=@aurodesignsystem/auro-cli -- auro rc-workflow
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Trigger release workflow on RC branch
+        run: |
+          RC_BRANCH=$(git ls-remote --heads origin 'rc/*' | sort -t'/' -k3 -V | tail -1 | awk '{print $2}' | sed 's|refs/heads/||')
+          if [ -n "$RC_BRANCH" ]; then
+            echo "Dispatching release workflow for branch: $RC_BRANCH"
+            gh workflow run release.yml --ref "$RC_BRANCH"
+          else
+            echo "No RC branch found to dispatch"
+          fi
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           
