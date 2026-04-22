@@ -44,7 +44,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [20, 22.22.1]
+        node-version: [22.22.1, 24]
     steps:
       - uses: actions/checkout@v4
       - uses: AlaskaAirlines/auro-actions/.github/actions/build@main
@@ -58,7 +58,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        node-version: [20, 22.22.1]
+        node-version: [22.22.1, 24]
     steps:
       - uses: actions/checkout@v4
       - uses: AlaskaAirlines/auro-actions/.github/actions/test@main
