@@ -20,6 +20,11 @@ on:
         required: false
         type: string
         default: '[{"name":"test","command":"npm run test"}]'
+      additional-build-command:
+        description: 'Optional command to run after build and before caching (e.g. `npx playwright install chromium`).'
+        required: false
+        type: string
+        default: ''
 
 permissions:
   id-token: write  # required for OIDC
@@ -42,6 +47,7 @@ jobs:
           os: ubuntu-latest
           node-version: ${{ matrix.node-version }}
           cache-dirs: ${{ inputs.cache-dirs }}
+          additional-build-command: ${{ inputs.additional-build-command }}
   test:
     needs: [build]
     runs-on: ubuntu-latest
