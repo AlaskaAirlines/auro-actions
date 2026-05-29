@@ -10,6 +10,10 @@ inputs:
   cache-dirs:
     description: 'Directories to cache build artifacts'
     required: true
+  command:
+    description: 'Test command to run. Defaults to `npm run test`.'
+    required: false
+    default: 'npm run test'
 runs:
   using: "composite"
   steps:
@@ -26,5 +30,5 @@ runs:
         path: ${{ inputs.cache-dirs }}
         key: build-${{ inputs.node-version }}-${{ github.run_id }}
     - name: Test
-      run: npm run test
+      run: ${{ inputs.command }}
       shell: bash

@@ -13,6 +13,13 @@ on:
           ./demo
           ./node_modules
           ./custom-elements.json
+      test-matrix:
+        description: |
+          JSON array of test slices to run as parallel jobs. Each entry: { name, command }.
+          Default = a single job running `npm run test` (existing behavior).
+        required: false
+        type: string
+        default: '[{"name":"test","command":"npm run test"}]'
 
 permissions:
   id-token: write  # required for OIDC
@@ -39,8 +46,11 @@ jobs:
     needs: [build]
     runs-on: ubuntu-latest
     strategy:
+      fail-fast: false
       matrix:
         node-version: [22.22.1, 24]
+        slice: ${{ fromJSON(inputs.test-matrix) }}
+    name: test (${{ matrix.slice.name }}, node ${{ matrix.node-version }})
     steps:
       - uses: actions/checkout@v4
       - uses: AlaskaAirlines/auro-actions/.github/actions/test@main
@@ -48,6 +58,7 @@ jobs:
           os: ubuntu-latest
           node-version: ${{ matrix.node-version }}
           cache-dirs: ${{ inputs.cache-dirs }}
+          command: ${{ matrix.slice.command }}
   release:
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
