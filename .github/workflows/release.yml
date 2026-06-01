@@ -65,6 +65,17 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache-dirs: ${{ inputs.cache-dirs }}
           command: ${{ matrix.slice.command }}
+  test-results:
+    if: ${{ always() }}
+    needs: [test]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Verify all test matrix jobs succeeded
+        run: |
+          if [ "${{ needs.test.result }}" != "success" ]; then
+            echo "One or more test matrix jobs failed (result: ${{ needs.test.result }})"
+            exit 1
+          fi
   release:
     if: github.event_name == 'push'
     runs-on: ubuntu-latest
