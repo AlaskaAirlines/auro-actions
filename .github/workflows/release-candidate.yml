@@ -4,6 +4,9 @@ on:
       GH_TOKEN:
         description: 'Personal access token. When provided, the RC branch push will trigger downstream workflows naturally, including PR checks. Falls back to explicit workflow dispatch.'
         required: false
+      ADO_TOKEN:
+        description: 'Azure DevOps PAT (org itsals), Work Items: Read. Resolves the auro-rcs Release ticket.'
+        required: true
 
 permissions:
   contents: write
@@ -30,6 +33,7 @@ jobs:
         run: npx --ignore-scripts --package=@aurodesignsystem/auro-cli -- auro rc-workflow
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN || secrets.GITHUB_TOKEN }}
+          ADO_TOKEN: ${{ secrets.ADO_TOKEN }}
       - name: Trigger release workflow on RC branch (GITHUB_TOKEN fallback)
         if: env.HAS_PAT != 'true'
         run: |
@@ -42,4 +46,3 @@ jobs:
           fi
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          
