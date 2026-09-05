@@ -1,5 +1,12 @@
 on:
   workflow_call:
+    secrets:
+      GH_TOKEN:
+        description: 'GitHub token used by auro rc-workflow. Falls back to the default GITHUB_TOKEN when not provided.'
+        required: false
+      ADO_TOKEN:
+        description: 'Azure DevOps PAT (org itsals), Work Items: Read. Resolves the auro-rcs Release ticket.'
+        required: true
 
 permissions:
   contents: write
@@ -22,4 +29,5 @@ jobs:
       - name: Run auro rc-workflow
         run: npx --ignore-scripts --package=@aurodesignsystem/auro-cli -- auro rc-workflow
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GH_TOKEN || secrets.GITHUB_TOKEN }}
+          ADO_TOKEN: ${{ secrets.ADO_TOKEN }}
