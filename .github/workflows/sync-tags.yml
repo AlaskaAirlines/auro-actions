@@ -1,28 +1,49 @@
 on:
   workflow_call:
+    secrets:
+      GH_TOKEN:
+        description: 'Personal access token belonging to a member of the dev branch ruleset bypass team. Required because the ruleset requires a pull request, so GITHUB_TOKEN cannot push to dev.'
+        required: true
+
+permissions:
+  contents: write
+
+concurrency:
+  group: sync-tags-${{ github.repository }}
+  cancel-in-progress: false
 
 jobs:
   sync-tags:
     runs-on: ubuntu-latest
-    if: github.event.release.target_commitish == 'main'
 
     steps:
       - name: Checkout Code
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ secrets.GH_TOKEN }}
 
-      - name: Push Tag to Dev Branch
+      - name: Fast-Forward Dev Branch to Main
         run: |
-          # Get the current tag
-          TAG=$(git describe --tags --exact-match)
-          echo "Syncing tag $TAG to dev branch"
+          set -euo pipefail
 
-          # Push the tag to the dev branch
-          git fetch --all
-          git checkout dev || { echo "Failed to checkout dev branch"; exit 1; }
-          git merge --ff-only $TAG || { echo "Failed to merge tag into dev"; exit 1; }
-          git push origin dev || { echo "Failed to push changes to dev"; exit 1; }
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          git fetch origin main dev
+
+          if git merge-base --is-ancestor origin/main origin/dev; then
+            echo "dev already contains every commit on main; nothing to sync."
+            exit 0
+          fi
+
+          if ! git merge-base --is-ancestor origin/dev origin/main; then
+            echo "::error::dev cannot be fast-forwarded to main; it carries commits main does not."
+            echo "Commits on dev that are missing from main:"
+            git log --oneline origin/main..origin/dev
+            echo "Reconcile by merging main into dev with a merge commit (never a rebase), then re-run this workflow."
+            exit 1
+          fi
+
+          git checkout dev
+          git merge --ff-only origin/main
+          git push origin dev
+
+          echo "dev fast-forwarded to $(git rev-parse --short origin/main)"
