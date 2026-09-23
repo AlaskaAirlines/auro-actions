@@ -75,17 +75,23 @@ jobs:
 
 ## 4. `sync-tags.yml`
 
+Fast-forwards `dev` to `main` after every release, so the two branches never drift apart.
+
+Triggered by work landing on `main` rather than by the `release` event: releases are published by a bot account, and GitHub does not start workflows from bot-published releases. `workflow_dispatch` is included so the sync can also be run by hand.
+
 ```yaml
 name: Sync Tags
 
 on:
-
-  release:
-    types: [published]
+  push:
+    branches: [main]
+  workflow_dispatch:
 
 jobs:
   action:
     uses: AlaskaAirlines/auro-actions/.github/workflows/sync-tags.yml@main
+    secrets:
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}
 ```
 
 ---
