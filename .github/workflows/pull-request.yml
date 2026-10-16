@@ -129,6 +129,22 @@ jobs:
               core.setOutput('version', packageJson.version);
               return packageJson;
             result-encoding: string
+        - name: Add package to custom-elements.json
+          env:
+            PACKAGE_NAME: ${{ steps.package.outputs.name }}
+            PACKAGE_VERSION: ${{ steps.package.outputs.version }}
+          run: |
+            node -e "
+            const fs = require('fs');
+            const file = './custom-elements.json';
+            if (!fs.existsSync(file)) {
+              console.log('::warning::custom-elements.json not found, skipping');
+              process.exit(0);
+            }
+            const manifest = JSON.parse(fs.readFileSync(file, 'utf8'));
+            manifest.package = process.env.PACKAGE_NAME + '@' + process.env.PACKAGE_VERSION;
+            fs.writeFileSync(file, JSON.stringify(manifest, null, 2) + '\n');
+            "
         - name: Publish to NPM
           run: npm publish --tag latest --provenance --ignore-scripts
           env:
