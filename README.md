@@ -42,34 +42,12 @@ Some workflows require specific secrets to be configured in your repository:
 
 ## `custom-elements.json` package field
 
-`pull-request.yml` sets `"package": "<name>@<version>"` in `custom-elements.json` before publishing a PR release. For `release.yml`, the version is only known to semantic-release, so each consuming repo must set the field itself with `@semantic-release/exec`. List it **after** `@semantic-release/npm` and before any publish step:
+Both `pull-request.yml` and `release.yml` set `"package": "<name>@<version>"` in `custom-elements.json` before publishing. No per-repo configuration is needed.
 
-```json
-{
-  "plugins": [
-    "@semantic-release/commit-analyzer",
-    "@semantic-release/release-notes-generator",
-    "@semantic-release/npm",
-    ["@semantic-release/exec", { "prepareCmd": "node scripts/add-package-to-manifest.mjs" }],
-    "@semantic-release/github"
-  ]
-}
-```
+- `pull-request.yml` reads the name and version from `package.json` after `auro pr-release` has rewritten it.
+- `release.yml` runs `npx semantic-release --dry-run` first and reads the version from its `The next release version is X` line, then stamps the file before the real release. If no release is due, the step is skipped.
 
-```js
-// scripts/add-package-to-manifest.mjs
-import fs from 'node:fs';
-
-const file = './custom-elements.json';
-if (fs.existsSync(file)) {
-  const { name, version } = JSON.parse(fs.readFileSync('./package.json', 'utf8'));
-  const manifest = JSON.parse(fs.readFileSync(file, 'utf8'));
-  manifest.package = `${name}@${version}`;
-  fs.writeFileSync(file, `${JSON.stringify(manifest, null, 2)}\n`);
-}
-```
-
-`@semantic-release/npm` writes the release version into `package.json` in its own prepare step, which is why the exec plugin must come after it.
+The dry run needs the same `GITHUB_TOKEN` and `NPM_TOKEN` as the real release, and it depends on semantic-release's log wording. If a semantic-release upgrade changes that message, the field will silently stop being set.
 
 ## Available Workflows
 
