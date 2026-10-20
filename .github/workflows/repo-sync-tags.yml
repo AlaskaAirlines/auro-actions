@@ -1,0 +1,15 @@
+name: Sync Tags
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  action:
+    uses: ./.github/workflows/sync-tags.yml
+    secrets:
+      GH_TOKEN: ${{ secrets.GH_TOKEN }}
