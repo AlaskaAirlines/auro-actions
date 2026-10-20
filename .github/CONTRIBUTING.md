@@ -147,6 +147,15 @@ fix(pencil): stop graphite breaking when too much pressure applied #80
 
 It is considered best practice to group multiple commits into a release. For a versioned update, be sure that your series of commits include either `feat`, `fix` or `perf`. For a `MAJOR` release, any commit can be accompanied by a `BREAKING CHANGE` comment as illustrated above.
 
+#### Commit types in auro-actions
+
+Almost every file in this repository is CI configuration, so choose the type by **who the change affects**:
+
+- Use `feat` or `fix` for changes to reusable workflows or composite actions that consuming repositories will see. These create a versioned release.
+- Use `ci`, `docs` or `chore` only for changes to auro-actions' own pipeline (`repo-*.yml`, release config, hooks, docs). These do not create a release.
+
+A release candidate with only `ci`, `docs` or `chore` commits still reaches every consumer when it merges to `main`, but without a version, tag or changelog entry. See [Choosing a commit type](../README.md#choosing-a-commit-type) in the README.
+
 ## Git commit messages
 
 Once you have completed your feature update, please commit all changes to the branch. All commit messages should use an **imperative mood**.

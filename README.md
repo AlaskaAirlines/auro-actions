@@ -87,6 +87,18 @@ auro-actions follows the same git flow as Auro components. Every Auro repository
 4. **RC pull request → `main`.** Merge with a merge commit (never squash or rebase). semantic-release creates the `vX.Y.Z` tag and GitHub release. Nothing is published to npm; the package is private.
 5. **`main` → `dev`.** The sync-tags workflow fast-forwards `dev` to `main`. If `dev` has diverged, merge `main` into `dev` with a merge commit (never a rebase) and re-run it.
 
+### Choosing a commit type
+
+The release version comes from commit types, and a release candidate is created whether or not its commits trigger a release. Because almost every change here touches CI files, pick the type by **who the change affects**, not by which files it touches:
+
+| Change | Type | Release |
+|---|---|---|
+| A reusable workflow or composite action change that consuming repositories will see (new input, behavior change, bug fix) | `feat` / `fix` | minor / patch |
+| A change consumers must act on (removed or renamed input, secret or workflow) | any type with `BREAKING CHANGE:` | major |
+| A change to auro-actions' own pipeline (`repo-*.yml`, `.releaserc`, hooks, docs) | `ci` / `docs` / `chore` | none |
+
+An RC made up only of `ci`, `docs` or `chore` commits still merges to `main` (and so reaches consumers on `@main`), but it creates no tag, release or changelog entry. If a change reaches consumers, use `feat` or `fix` so it gets a version that can be tracked and rolled back. When needed, a maintainer can change a commit's type to force a release.
+
 This repository runs its own workflows from the `repo-*.yml` files in `.github/workflows`. They call the reusable workflows through local paths (`./.github/workflows/…`), so a pull request tests its own workflow changes. Composite actions are still referenced at `@main` inside the reusable workflows, so changes to `.github/actions` only take effect after they reach `main`.
 
 ## Contributing
