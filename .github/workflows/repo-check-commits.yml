@@ -1,0 +1,9 @@
+name: Check Commits
+
+on:
+  pull_request:
+    types: [opened, reopened, unlabeled, synchronize]
+
+jobs:
+  action:
+    uses: ./.github/workflows/check-commits.yml

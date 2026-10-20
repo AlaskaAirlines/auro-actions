@@ -1,0 +1,12 @@
+name: Release Workflow
+
+on:
+  push:
+    branches:
+      - 'rc/**'
+      - 'main'
+  workflow_dispatch:
+
+jobs:
+  action:
+    uses: ./.github/workflows/no-build_release.yml

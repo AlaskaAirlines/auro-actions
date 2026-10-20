@@ -38,6 +38,7 @@ Some workflows require specific secrets to be configured in your repository:
 - **NPM_TOKEN**: Required for `pull-request.yml` and `release.yml` workflows for npm operations
 - **AURO_SURGE_TOKEN**: Required for `pull-request.yml` workflow for Surge deployment
 - **GH_TOKEN**: Required for `sync-tags.yml` and `release-candidate.yml`. Must belong to a member of the `dev` branch ruleset's bypass team — the ruleset requires a pull request, so the default `GITHUB_TOKEN` cannot push to `dev`. If this token expires the sync stops working.
+- **ADO_TOKEN**: Required for `release-candidate.yml`. Azure DevOps PAT (org `itsals`) with Work Items: Read, used to resolve the `auro-rcs` Release ticket that names the RC branch.
 
 ## `custom-elements.json` package field
 
@@ -76,6 +77,18 @@ if (fs.existsSync(file)) {
 - Automated release processes
 - Deploy and publish workflows
 
+## Git flow and releases
+
+auro-actions follows the same git flow as Auro components. Every Auro repository calls these workflows at `@main`, so a change reaches consumers only when its release candidate is merged to `main`.
+
+1. **Feature branch → `dev`.** Branch from `dev` and open a pull request into `dev`. Commits must follow [Conventional Commits](https://www.conventionalcommits.org/) and reference the ADO work item (`AB#<id>`). The `validate` check (`npm run validate`), commit check, review policy and CodeQL run on the pull request.
+2. **`dev` → release candidate.** Each push to `dev` runs `auro rc-workflow`. It finds the `auro-rcs` Release ticket linked to the new commits, then creates or updates the `rc/<ticket id>` branch and the `RC #<ticket id>` pull request into `main`. If no commit links to a Release ticket, no RC is created.
+3. **`rc/*` → prerelease.** Each push to an `rc/*` branch runs semantic-release, which creates a GitHub prerelease such as `v1.2.0-rc-<ticket id>.1`. To try a release candidate from a consuming repository, point its workflow at `@rc/<ticket id>`.
+4. **RC pull request → `main`.** Merge with a merge commit (never squash or rebase). semantic-release creates the `vX.Y.Z` tag and GitHub release. Nothing is published to npm; the package is private.
+5. **`main` → `dev`.** The sync-tags workflow fast-forwards `dev` to `main`. If `dev` has diverged, merge `main` into `dev` with a merge commit (never a rebase) and re-run it.
+
+This repository runs its own workflows from the `repo-*.yml` files in `.github/workflows`. They call the reusable workflows through local paths (`./.github/workflows/…`), so a pull request tests its own workflow changes. Composite actions are still referenced at `@main` inside the reusable workflows, so changes to `.github/actions` only take effect after they reach `main`.
+
 ## Contributing
 
-Changes to workflows in this repository affect all Auro repositories. Test thoroughly before releasing updates.
+Changes to workflows in this repository affect all Auro repositories. Test thoroughly before releasing updates. See [CONTRIBUTING](.github/CONTRIBUTING.md) for branch, commit and pull request guidelines.
