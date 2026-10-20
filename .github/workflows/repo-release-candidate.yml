@@ -5,6 +5,13 @@ on:
     branches:
       - 'dev'
 
+permissions:
+  actions: write
+  contents: write
+  deployments: write
+  issues: write
+  pull-requests: write
+
 jobs:
   action:
     uses: ./.github/workflows/release-candidate.yml

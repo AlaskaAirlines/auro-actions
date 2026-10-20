@@ -7,6 +7,14 @@ on:
       - 'main'
   workflow_dispatch:
 
+permissions:
+  actions: read
+  contents: write
+  deployments: write
+  id-token: write
+  issues: write
+  pull-requests: write
+
 jobs:
   action:
     uses: ./.github/workflows/no-build_release.yml
