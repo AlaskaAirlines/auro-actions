@@ -104,6 +104,35 @@ jobs:
         with:
           path: ${{ inputs.cache-dirs }}
           key: build-22.22.1-${{ github.run_id }}
+      - name: Add package to custom-elements.json
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: |
+          log="$RUNNER_TEMP/semantic-release-dry-run.log"
+          if ! npx semantic-release --dry-run > "$log" 2>&1; then
+            cat "$log"
+            exit 1
+          fi
+          cat "$log"
+          next_version=$(grep -oE 'The next release version is [0-9]+\.[0-9]+\.[0-9]+[0-9A-Za-z.+-]*' "$log" | head -n 1 | awk '{print $NF}')
+          if [ -z "$next_version" ]; then
+            echo "::notice::No new release detected, skipping custom-elements.json package field"
+            exit 0
+          fi
+          PACKAGE_VERSION="$next_version" node -e "
+          const fs = require('fs');
+          const file = './custom-elements.json';
+          if (!fs.existsSync(file)) {
+            console.log('::warning::custom-elements.json not found, skipping');
+            process.exit(0);
+          }
+          const { name } = JSON.parse(fs.readFileSync('./package.json', 'utf8'));
+          const manifest = JSON.parse(fs.readFileSync(file, 'utf8'));
+          manifest.package = name + '@' + process.env.PACKAGE_VERSION;
+          fs.writeFileSync(file, JSON.stringify(manifest, null, 2) + '\n');
+          console.log('Set package to ' + manifest.package);
+          "
       - name: Release
         run: npx semantic-release
         env:
