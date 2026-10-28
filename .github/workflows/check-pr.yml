@@ -19,6 +19,7 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
           rules_yaml: | # define which PR labels require how many approving reviewers
             "semantic-status: breaking": 1
+            "semver-override": 1
   enough-approvals:
     runs-on: ubuntu-latest
     needs: require-reviewers
@@ -72,8 +73,8 @@ jobs:
         with:
           header: review-policy
           message: |
-            ## 🚨 Breaking Change Review Policy
-            
-            This PR contains breaking changes and requires at least `1` approving reviews to be merged.
+            ## 🚨 Review Policy
+
+            This PR contains breaking changes or overrides the version check (`semver-override`), so it requires at least `1` approving review to be merged.
 
             **Approvals:** `${{ steps.pr-data.outputs.approved }} of ${{ steps.pr-data.outputs.required }}`

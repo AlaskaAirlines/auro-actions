@@ -173,3 +173,23 @@ jobs:
         ./node_modules
         ./custom-elements.json
 ```
+
+---
+
+## 9. `api-diff.yml`
+
+Fails a pull request into `dev` when its commits declare a smaller version bump than its code changes require. Opt-in: add this caller once the repo's lockfile resolves `@aurodesignsystem/auro-config` 1.3.2 or later, then add `Version Check / api-diff` as a required status check in the repo's `Dev` ruleset. See [Version check](./README.md#version-check-api-diffyml).
+
+```yaml
+name: Version Check
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, labeled, unlabeled]
+    branches: [dev]
+
+jobs:
+  action:
+    name: Version Check
+    uses: AlaskaAirlines/auro-actions/.github/workflows/api-diff.yml@main
+```
