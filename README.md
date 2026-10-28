@@ -49,6 +49,22 @@ Both `pull-request.yml` and `release.yml` set `"package": "<name>@<version>"` in
 
 The dry run needs the same `GITHUB_TOKEN` and `NPM_TOKEN` as the real release, and it depends on semantic-release's log wording. If a semantic-release upgrade changes that message, the field will silently stop being set.
 
+## Version check (`api-diff.yml`)
+
+`api-diff.yml` runs [`auro api-diff`](https://github.com/AlaskaAirlines/auro-cli#auro-api-diff-baseref-headref) on each pull request into `dev`. The check works out the smallest version bump the code changes require, then compares it with the bump the commits declare. If the commits declare less, the check fails. For example, a `fix:` commit that removes a public attribute fails, because removing an attribute requires a major release. Each run posts a PR comment listing the changes and commits.
+
+The check is opt-in. To turn it on in a repo:
+
+1. Make sure the repo's lockfile resolves `@aurodesignsystem/auro-config` 1.3.2 or later. Earlier versions install a commit parser that ignores the `!` breaking-change marker, so the check would fail correctly labeled `feat!:` commits.
+2. Add the caller from [examples.md](./examples.md#9-api-diffyml).
+3. Add `Version Check / api-diff` as a required status check in the repo's `Dev` ruleset.
+
+**Override.** If the check is wrong, add the `semver-override` label to the pull request. The check still runs and comments, but it doesn't fail. `check-pr.yml` then requires an approving review, the same as for a breaking change. Explain in the PR description why the declared bump is correct.
+
+**Pinned auro-cli version.** The workflow runs the auro-cli version in its `auro-cli-version` input (default `5.2.0`), not the latest release. A new auro-cli release can change the rules, so it reaches enforced repos only when this default is bumped here.
+
+The check fails, without an override, when it can't run: for example, when the head doesn't build or the repo has no `@semantic-release/commit-analyzer` installed.
+
 ## Available Workflows
 
 - Build and test workflows

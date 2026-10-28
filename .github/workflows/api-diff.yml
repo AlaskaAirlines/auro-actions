@@ -1,0 +1,142 @@
+on:
+  workflow_call:
+    inputs:
+      auro-cli-version:
+        description: |
+          auro-cli version that runs the check. Pinned so a new auro-cli release can't change
+          what blocks pull requests until this default is bumped here.
+        required: false
+        type: string
+        default: '5.2.0'
+      node-version:
+        description: 'Node.js version to use'
+        required: false
+        type: string
+        default: '22.22.1'
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  api-diff:
+    runs-on: ubuntu-latest
+    env:
+      OVERRIDE_LABEL: semver-override
+      # The override turns the check report-only; check-pr then requires an approving review.
+      OVERRIDDEN: ${{ contains(github.event.pull_request.labels.*.name, 'semver-override') }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Check the PR head, not GitHub's merge commit, so the result matches running
+          # `auro api-diff origin/<base>` locally on the branch.
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0 # api-diff needs the merge base and every PR commit
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ inputs.node-version }}
+      # api-diff reads commits with the repo's own @semantic-release/commit-analyzer,
+      # so the declared bump matches the release exactly.
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+        env:
+          HUSKY: 0
+      - name: Auro API Diff
+        id: api-diff
+        env:
+          AURO_CLI_VERSION: ${{ inputs.auro-cli-version }}
+          BASE_REF: ${{ github.base_ref }}
+        run: |
+          enforce="--enforce"
+          if [ "$OVERRIDDEN" = "true" ]; then
+            enforce=""
+          fi
+          set +e
+          npx --yes --ignore-scripts --package="@aurodesignsystem/auro-cli@${AURO_CLI_VERSION}" -- \
+            auro api-diff "origin/${BASE_REF}" $enforce --json \
+            > "$RUNNER_TEMP/api-diff.json" 2> "$RUNNER_TEMP/api-diff.log"
+          code=$?
+          set -e
+          cat "$RUNNER_TEMP/api-diff.log" >&2
+          echo "exit-code=$code" >> "$GITHUB_OUTPUT"
+        shell: bash
+      - name: Write PR comment
+        env:
+          EXIT_CODE: ${{ steps.api-diff.outputs.exit-code }}
+        run: |
+          node <<'EOF'
+          const fs = require('fs');
+          const temp = process.env.RUNNER_TEMP;
+          const code = Number(process.env.EXIT_CODE);
+          const label = process.env.OVERRIDE_LABEL;
+          const overridden = process.env.OVERRIDDEN === 'true';
+          const lines = [];
+
+          if (code === 2) {
+            const log = fs.readFileSync(`${temp}/api-diff.log`, 'utf8').trim().split('\n').slice(-20).join('\n');
+            lines.push(
+              '## ✖ Version check couldn\'t run',
+              '',
+              'The check fails until it can run. The most common causes are a head that doesn\'t build, or a repo without `@semantic-release/commit-analyzer` installed.',
+              '',
+              '```',
+              log,
+              '```',
+            );
+          } else {
+            const result = JSON.parse(fs.readFileSync(`${temp}/api-diff.json`, 'utf8'));
+            const heading = {
+              pass: '✔ Version check passed',
+              warn: '⚠ Version check passed with a warning',
+              fail: overridden ? '⚠ Version check overridden' : '✖ Version check failed',
+            }[result.outcome];
+            lines.push(`## ${heading}`, '', result.summary);
+
+            if (result.outcome === 'fail' && overridden) {
+              lines.push('', `**Overridden with \`${label}\`.** This check doesn't block the PR, but the Review Policy check requires an approving review. Explain in the PR description why the declared bump is correct.`);
+            } else if (result.outcome === 'fail') {
+              lines.push(
+                '',
+                `**To fix:** reword the commits so they declare at least a ${result.required} release. Use \`feat:\` for a minor, or add \`!\` (for example \`feat!:\`) for a major.`,
+                `If the check is wrong, add the \`${label}\` label, explain why in the PR description, and get an approving review.`,
+              );
+            } else if (result.outcome === 'warn') {
+              lines.push('', 'No release is required, but the commits declare one. If nothing published changed, consider a type that doesn\'t release, such as `test:`, `ci:` or `chore:`.');
+            }
+
+            if (result.changes.length > 0) {
+              lines.push('', '**Changes**', '');
+              for (const change of result.changes) {
+                const cause = change.cause === 'generator' ? ' _(generator upgrade)_' : '';
+                lines.push(`- \`${change.bump}\` ${change.message}${cause}`);
+              }
+            }
+            if (result.commits.length > 0) {
+              lines.push('', '**Commits**', '');
+              for (const commit of result.commits) {
+                lines.push(`- \`${commit.bump}\` ${commit.hash.slice(0, 7)} ${commit.subject}`);
+              }
+            }
+            for (const warning of result.warnings) {
+              lines.push('', `> ⚠ ${warning}`);
+            }
+          }
+
+          fs.writeFileSync(`${temp}/api-diff-comment.md`, `${lines.join('\n')}\n`);
+          EOF
+        shell: bash
+      - name: Comment on PR
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: api-diff
+          path: ${{ runner.temp }}/api-diff-comment.md
+      - name: Report result
+        env:
+          EXIT_CODE: ${{ steps.api-diff.outputs.exit-code }}
+        run: exit "$EXIT_CODE"
+        shell: bash
